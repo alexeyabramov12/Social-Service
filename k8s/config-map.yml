@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: social-service-config-map
+  namespace: javapro-team33
+data:
+  DATASOURCE_HOST: 172.17.0.9
