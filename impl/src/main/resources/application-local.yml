@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    username: skillbox
+    password: skillbox
 
   liquibase:
     enabled: true
@@ -19,6 +19,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         default_schema: public
+
+
 jwt:
   secret:
     access: jwtsocialserviceapptywrtywryhwsrtyhsfthshsrhsrth
@@ -30,3 +32,5 @@ whitelist:
     - /**/captcha
     - /**/register
     - /**/registration
+    - /**/v3/api-docs/**
+    - /**/swagger-ui/**

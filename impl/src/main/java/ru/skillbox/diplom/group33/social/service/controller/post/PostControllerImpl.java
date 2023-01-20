@@ -1,6 +1,7 @@
 package ru.skillbox.diplom.group33.social.service.controller.post;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class PostControllerImpl implements PostController {
     }
 
     @Override
-    public ResponseEntity<PostDto> getAll(PostSearchDto searchDto, Pageable page) {
+    public ResponseEntity<Page<PostDto>> getAll(PostSearchDto searchDto, Pageable page) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getAll(searchDto, page));
     }
 
