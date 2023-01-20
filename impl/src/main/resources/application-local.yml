@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    username: postgres
+    password: GBACK
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/jwt?serverTimezone=UTC
+    user: postgres
+    password: GBACK
+    enabled: false
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        default_schema: public
+
+jwt:
+  secret:
+    access: jwtsocialserviceapptywrtywryhwsrtyhsfthshsrhsrth
+    refresh: jwtsocialsirviceapprefreshtokenstrhsrthhtrstthsrhsh
+
+whitelist:
+  permit:
+    - /**/login
+    - /**/captcha
+    - /**/register
+    - /**/registration
+
