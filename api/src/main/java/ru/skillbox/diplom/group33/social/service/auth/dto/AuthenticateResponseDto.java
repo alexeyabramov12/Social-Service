@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.dto;
+package ru.skillbox.diplom.group33.social.service.auth.dto;
 
 import lombok.*;
 @Data
