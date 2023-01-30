@@ -1,14 +1,14 @@
-package ru.skillbox.diplom.group33.social.service.mapper;
+package ru.skillbox.diplom.group33.social.service.mapper.auth;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
-import ru.skillbox.diplom.group33.social.service.auth.dto.UserDto;
-import ru.skillbox.diplom.group33.social.service.model.User;
+import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
+import ru.skillbox.diplom.group33.social.service.dto.auth.UserDto;
+import ru.skillbox.diplom.group33.social.service.model.auth.User;
 
 @Mapper(componentModel = "spring")
-public interface SimpleMapper {
+public interface UserMapper {
     BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
 
     UserDto registrationToUserDto(RegistrationDto registrationDto);

@@ -52,4 +52,26 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet  id="create_sequence" author="kogut">
+        <createSequence
+                         catalogName="sequence"
+                         incrementBy="1"
+                         schemaName="public"
+                         sequenceName="sequence"
+                         startValue="1"/>
+    </changeSet>
+
+    <changeSet  id="insert_USER" author="kogut">
+        <insert tableName="role">
+            <column name="name" value="USER"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+    </changeSet>
+    <changeSet  id="insert_ADMIN" author="kogut">
+        <insert tableName="role">
+            <column name="name" value="ADMIN"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

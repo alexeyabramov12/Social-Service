@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.model.base;
+package ru.skillbox.diplom.group33.social.service.dto.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

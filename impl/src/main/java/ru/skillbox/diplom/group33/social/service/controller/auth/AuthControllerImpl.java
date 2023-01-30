@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.controller;
+package ru.skillbox.diplom.group33.social.service.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,11 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateDto;
-import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateResponseDto;
+import ru.skillbox.diplom.group33.social.service.controller.auth.AuthController;
+import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateDto;
+import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateResponseDto;
+import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
-import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
-import ru.skillbox.diplom.group33.social.service.service.AuthService;
+import ru.skillbox.diplom.group33.social.service.service.auth.AuthService;
 import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;
 
 
@@ -24,7 +25,7 @@ public class AuthControllerImpl implements AuthController {
     private final CaptchaService captchaService;
     @Override
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody AuthenticateDto authenticateDto) {
-        log.info("login");
+        log.info("login controller entered");
         final AuthenticateResponseDto response = authService.login(authenticateDto);
         return ResponseEntity.ok(response);
     }
@@ -34,7 +35,7 @@ public class AuthControllerImpl implements AuthController {
     @Override
     @ResponseStatus(HttpStatus.OK)
     public void register(RegistrationDto registrationDto) {
-        log.error("register");
+        log.info("Registration controller entered");
         authService.register(registrationDto);
     }
 
