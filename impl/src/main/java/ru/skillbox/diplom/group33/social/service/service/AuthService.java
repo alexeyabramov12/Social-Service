@@ -3,20 +3,23 @@ package ru.skillbox.diplom.group33.social.service.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.config.security.JwtTokenProvider;
-import ru.skillbox.diplom.group33.social.service.dto.AuthenticateDto;
-import ru.skillbox.diplom.group33.social.service.dto.AuthenticateResponseDto;
-import ru.skillbox.diplom.group33.social.service.dto.RegistrationDto;
-import ru.skillbox.diplom.group33.social.service.dto.UserDto;
+import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateDto;
+import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateResponseDto;
+import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
+import ru.skillbox.diplom.group33.social.service.auth.dto.UserDto;
 import ru.skillbox.diplom.group33.social.service.mapper.SimpleMapperImpl;
 import ru.skillbox.diplom.group33.social.service.model.Role;
 import ru.skillbox.diplom.group33.social.service.model.User;
 import ru.skillbox.diplom.group33.social.service.repository.RoleRepository;
 import ru.skillbox.diplom.group33.social.service.repository.UserRepository;
+import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
+
+    private final CaptchaService captchaService;
 
     public AuthenticateResponseDto login(@NonNull AuthenticateDto authenticateDto) {
 
@@ -50,6 +55,11 @@ public class AuthService {
         if (userRepository.findByEmail(registrationDto.getEmail()).isPresent()) {
             log.warn("User already exists");
             return null;
+        }
+
+        if (!captchaService.passCaptcha(registrationDto)) {
+            log.warn("user failed captcha");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         List<Role> roles = new ArrayList<>();

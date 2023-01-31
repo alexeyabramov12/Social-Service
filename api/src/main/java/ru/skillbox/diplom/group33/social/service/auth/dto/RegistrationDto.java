@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.dto;
+package ru.skillbox.diplom.group33.social.service.auth.dto;
 import lombok.Data;
 @Data
 public class RegistrationDto {
@@ -8,6 +8,6 @@ public class RegistrationDto {
     private String password2;
     private String firstName;
     private String lastName;
-    private String captchaCode;
-    private String captchaSecret;
+    private String code;
+    private String token;
 }
