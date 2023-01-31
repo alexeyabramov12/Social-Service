@@ -1,0 +1,50 @@
+image: maven:3-openjdk-18-slim
+
+stages:
+  - build
+  - deploy-docker
+  - deploy-k8s
+
+build:
+  stage: build
+  only:
+    - develop
+  before_script:
+    - echo "build project"
+  script:
+    - mvn clean package
+  artifacts:
+    paths:
+      - impl/target/*.jar
+  after_script:
+    - echo "done build project"
+
+deploy-docker:
+  image: docker:19.03.12
+  stage: deploy-docker
+  only:
+    - develop
+  before_script:
+    - echo "deploy docker"
+    - docker logout
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+  script:
+    - docker build -t team33/social-service .
+    - docker push team33/social-service
+  after_script:
+    - echo "done deploy docker"
+
+deploy-k8s:
+  stage: deploy-k8s
+  only:
+    - develop
+  before_script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - echo "$SSH_SERVER_KEY" | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "kubectl rollout restart -n $NAMESPACE deployment $DEPLOY_NAME"

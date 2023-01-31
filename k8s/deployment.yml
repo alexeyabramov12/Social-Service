@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: social-service
+  namespace: javapro-team33
+  labels:
+    app: social-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: social-service
+  template:
+    metadata:
+      labels:
+        app: social-service
+    spec:
+      containers:
+        - name: social-service
+          image: team33/social-service:latest
+          envFrom:
+            - configMapRef:
+                name: social-service-config-map
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "400m"
+          ports:
+            - containerPort: 8080
