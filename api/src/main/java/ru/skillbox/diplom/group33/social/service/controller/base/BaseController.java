@@ -18,7 +18,7 @@ public interface BaseController<Dto extends BaseDto, SearchDto extends BaseSearc
     ResponseEntity<Dto> getById(@PathVariable Long id);
 
     @GetMapping
-    ResponseEntity<Page<Dto>>getAll(SearchDto searchDto, Pageable page);
+    ResponseEntity<Page<Dto>> getAll(SearchDto searchDto, Pageable page);
 
     @PostMapping
     ResponseEntity<Dto> create(@RequestBody Dto dto);

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create_table_account" author="Krivolapov">
+        <createTable tableName="account">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="reg_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="birth_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="about" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message_permission" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_online_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_blocked" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="confirmation_code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_confirmation_code" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_email_confirm" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_online" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_on" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_on" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <dropNotNullConstraint tableName="account" columnName="phone"/>
+        <dropNotNullConstraint tableName="account" columnName="photo"/>
+        <dropNotNullConstraint tableName="account" columnName="about"/>
+        <dropNotNullConstraint tableName="account" columnName="message_permission"/>
+        <dropNotNullConstraint tableName="account" columnName="last_online_time"/>
+        <dropNotNullConstraint tableName="account" columnName="user_type"/>
+        <dropNotNullConstraint tableName="account" columnName="city_name"/>
+        <dropNotNullConstraint tableName="account" columnName="country_name"/>
+        <dropNotNullConstraint tableName="account" columnName="is_deleted"/>
+        <dropNotNullConstraint tableName="account" columnName="confirmation_code"/>
+        <dropNotNullConstraint tableName="account" columnName="time_confirmation_code"/>
+        <dropNotNullConstraint tableName="account" columnName="is_email_confirm"/>
+        <dropNotNullConstraint tableName="account" columnName="is_online"/>
+        <dropNotNullConstraint tableName="account" columnName="birth_date"/>
+    </changeSet>
+</databaseChangeLog>
