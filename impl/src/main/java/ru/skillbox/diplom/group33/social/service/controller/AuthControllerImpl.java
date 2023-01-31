@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateDto;
 import ru.skillbox.diplom.group33.social.service.auth.dto.AuthenticateResponseDto;
-import ru.skillbox.diplom.group33.social.service.captcha.dto.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
 import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.service.AuthService;
 import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;

@@ -19,3 +19,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         default_schema: public
+jwt:
+  secret:
+    access: jwtsocialserviceapptywrtywryhwsrtyhsfthshsrhsrth
+    refresh: jwtsocialsirviceapprefreshtokenstrhsrthhtrstthsrhsh
+
+whitelist:
+  permit:
+    - /**/login
+    - /**/captcha
+    - /**/register
+    - /**/registration

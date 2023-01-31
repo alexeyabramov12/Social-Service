@@ -14,7 +14,9 @@ import ru.skillbox.diplom.group33.social.service.repository.UserRepository;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtUserDetailsService implements UserDetailsService {
+
     private final UserRepository repository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

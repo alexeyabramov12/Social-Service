@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "captcha")
 @Getter
 @Setter
 public class Captcha {

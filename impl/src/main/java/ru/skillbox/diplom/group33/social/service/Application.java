@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.skillbox.diplom.group33.social.service.repository.base.BaseRepositoryImpl;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "ru.skillbox.diplom.group33.social.service.repository.base",
+@EnableJpaRepositories(basePackages = "ru.skillbox.diplom.group33.social.service.repository",
         repositoryBaseClass = BaseRepositoryImpl.class)
 public class Application {
     public static void main(String[] args) {
