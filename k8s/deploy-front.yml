@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: javapro-team33
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: team33/front:latest
+          envFrom:
+            - configMapRef:
+                name: kube-root-ca.crt
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          ports:
+            - containerPort: 80
