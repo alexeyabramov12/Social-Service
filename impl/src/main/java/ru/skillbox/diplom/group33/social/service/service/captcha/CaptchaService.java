@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.repository.captcha.CaptchaRepository;
 import ru.skillbox.diplom.group33.social.service.model.captcha.Captcha;
-import ru.skillbox.diplom.group33.social.service.captcha.dto.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;

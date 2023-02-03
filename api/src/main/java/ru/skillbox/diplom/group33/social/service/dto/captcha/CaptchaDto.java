@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.captcha.dto;
+package ru.skillbox.diplom.group33.social.service.dto.captcha;
 
 import lombok.*;
 

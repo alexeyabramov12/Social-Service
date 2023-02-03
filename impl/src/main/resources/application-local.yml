@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/SN
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: test
+    password: postgres
 
   liquibase:
     enabled: true
@@ -19,3 +19,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         default_schema: public
+jwt:
+  secret:
+    access: jwtsocialserviceapptywrtywryhwsrtyhsfthshsrhsrth
+    refresh: jwtsocialsirviceapprefreshtokenstrhsrthhtrstthsrhsh
+
+whitelist:
+  permit:
+    - /**/login
+    - /**/captcha
+    - /**/register
+    - /**/registration
