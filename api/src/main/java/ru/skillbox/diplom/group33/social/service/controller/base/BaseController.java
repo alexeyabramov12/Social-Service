@@ -3,8 +3,8 @@ package ru.skillbox.diplom.group33.social.service.controller.base;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skillbox.diplom.group33.social.service.model.base.BaseDto;
-import ru.skillbox.diplom.group33.social.service.model.base.BaseSearchDto;
+import ru.skillbox.diplom.group33.social.service.dto.base.BaseDto;
+import ru.skillbox.diplom.group33.social.service.dto.base.BaseSearchDto;
 
 public interface BaseController<Dto extends BaseDto, SearchDto extends BaseSearchDto> {
 

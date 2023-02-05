@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.skillbox.diplom.group33.social.service.model.Role;
-import ru.skillbox.diplom.group33.social.service.model.User;
+import ru.skillbox.diplom.group33.social.service.model.auth.Role;
+import ru.skillbox.diplom.group33.social.service.model.auth.User;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;

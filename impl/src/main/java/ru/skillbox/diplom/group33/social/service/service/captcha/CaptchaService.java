@@ -3,10 +3,10 @@ package ru.skillbox.diplom.group33.social.service.service.captcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.skillbox.diplom.group33.social.service.auth.dto.RegistrationDto;
-import ru.skillbox.diplom.group33.social.service.repository.captcha.CaptchaRepository;
-import ru.skillbox.diplom.group33.social.service.model.captcha.Captcha;
+import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.model.captcha.Captcha;
+import ru.skillbox.diplom.group33.social.service.repository.captcha.CaptchaRepository;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
