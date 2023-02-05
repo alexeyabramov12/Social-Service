@@ -201,7 +201,7 @@ FriendService {
         List<Long> allIds = friendRepository.findAll(getSpecification(search))
                 .stream()
                 .map(Friend::getFromAccountId)
-                .toList();
+                .collect(Collectors.toList());
         for (Long id : allIds) {
             //id которые исключаются из выборки
             List<Long> exceptIds = getFriendIdsWhoBlocked(id);
@@ -235,7 +235,7 @@ FriendService {
                     .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                     .limit(10)
                     .map(Map.Entry::getKey)
-                    .toList();
+                    .collect(Collectors.toList());
 
             Long count = 0L;
 
@@ -263,7 +263,7 @@ FriendService {
         mySearchDto.setStatusCode(StatusCode.FRIEND);
         return friendRepository.findAll(getSpecification(mySearchDto))
                 .stream()
-                .map(Friend::getFromAccountId).toList();
+                .map(Friend::getFromAccountId).collect(Collectors.toList());
     }
 
     private List<Long> getFriendIdsWhoBlockedMe(Long id) {

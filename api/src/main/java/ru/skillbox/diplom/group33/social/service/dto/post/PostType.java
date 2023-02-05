@@ -1,4 +1,5 @@
 package ru.skillbox.diplom.group33.social.service.dto.post;
 
-public class PostType {
+public enum PostType {
+    POSTED, QUEUED
 }

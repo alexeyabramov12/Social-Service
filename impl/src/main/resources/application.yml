@@ -43,3 +43,6 @@ whitelist:
     - /**/registration
     - /**/v3/api-docs/**
     - /**/swagger-ui/**
+springdoc:
+  swagger-ui:
+    path: /swagger-ui-custom.html

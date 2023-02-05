@@ -15,4 +15,6 @@ public class SecurityUtils {
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return jwtUser.getId();
     }
+
 }
+

@@ -1,7 +1,7 @@
 package ru.skillbox.diplom.group33.social.service.service.captcha;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
@@ -16,18 +16,16 @@ import java.util.Base64;
 import java.util.UUID;
 
 
-@Service
+
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class CaptchaService {
 
     private final CaptchaRepository captchaRepository;
-
     private final String IMAGE_FORMAT = "png";
 
-    @Autowired
-    public CaptchaService(CaptchaRepository captchaRepository) {
-        this.captchaRepository = captchaRepository;
-    }
+
 
     public CaptchaDto getCaptcha() {
         Captcha captcha = createCaptcha();
@@ -57,9 +55,10 @@ public class CaptchaService {
     }
 
     public boolean passCaptcha(RegistrationDto registrationDto) {
-        Captcha captchaOrigin = captchaRepository.findById(UUID.fromString(registrationDto.getToken())).orElseThrow(RuntimeException::new);
-        log.info("pass captcha: {}", captchaOrigin.getCode().equals(registrationDto.getCode()));
-        return captchaOrigin.getCode().equals(registrationDto.getCode());
+        Captcha captchaOrigin = captchaRepository.getById(UUID.fromString(registrationDto.getToken()));
+        boolean passCaptcha = captchaOrigin.getCode().equals(registrationDto.getCode());
+        log.info("In CaptchaService passCaptcha: {}", passCaptcha);
+        return passCaptcha;
     }
 
 }
