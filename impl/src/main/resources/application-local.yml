@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
-    username: skillbox
-    password: skillbox
+    username: postgres
+    password: postgres
 
   liquibase:
     enabled: true
@@ -20,6 +20,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         default_schema: public
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: latest
+      group-id: testLocal
+
+topic:
+  name: social-service-topic
 
 jwt:
   secret:
