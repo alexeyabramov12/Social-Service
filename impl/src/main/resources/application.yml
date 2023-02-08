@@ -1,17 +1,17 @@
 spring:
-  datasource:
+ datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/postgres
     username: skillbox
     password: skillbox
 
-  liquibase:
+ liquibase:
     enabled: true
     drop-first: false
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 
-  jpa:
+ jpa:
     show-sql: true
     hibernate:
       ddl-auto: none
@@ -30,3 +30,5 @@ whitelist:
     - /**/captcha
     - /**/register
     - /**/registration
+    - /**/v3/api-docs/**
+    - /**/swagger-ui/**

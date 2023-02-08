@@ -1,12 +1,13 @@
 package ru.skillbox.diplom.group33.social.service.service.post;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
-import ru.skillbox.diplom.group33.social.service.model.post.Post;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
+import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
+import ru.skillbox.diplom.group33.social.service.model.post.Post;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 
 @Service
@@ -23,7 +24,7 @@ public class PostService {
         return mapper.toPostDto(post);
     }
 
-    public PostDto getAll(PostSearchDto searchDto, Pageable page) {
+    public Page<PostDto> getAll(PostSearchDto searchDto, Pageable page) {
         return null;
     }
 
