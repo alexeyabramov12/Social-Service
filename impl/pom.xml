@@ -27,6 +27,10 @@
             <artifactId>social-service-db</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>

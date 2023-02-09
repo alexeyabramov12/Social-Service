@@ -34,7 +34,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
-
     private final CaptchaService captchaService;
     private final AccountService accountService;
 
@@ -53,7 +52,6 @@ public class AuthService {
     }
 
     public UserDto register(RegistrationDto registrationDto) {
-
         if (userRepository.findByEmail(registrationDto.getEmail()).isPresent()) {
             log.warn("User already exists");
             return null;
