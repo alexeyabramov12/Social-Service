@@ -1,13 +1,13 @@
 spring:
  datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/postgres
-    username: skillbox
-    password: skillbox
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
  liquibase:
     enabled: true
-    drop-first: false
+    drop-first: ${SWITCH_DROP_FIRST}
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 

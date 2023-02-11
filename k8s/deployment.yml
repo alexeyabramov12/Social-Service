@@ -20,10 +20,26 @@ spec:
           image: team33/social-service:latest
           envFrom:
             - configMapRef:
-                name: social-service-config-map
+                name: social-service-config
           resources:
             limits:
               memory: "512Mi"
               cpu: "400m"
           ports:
             - containerPort: 8080
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: social-service-secret
+                  key: postgres-db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: social-service-secret
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: social-service-secret
+                  key: postgres-password

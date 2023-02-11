@@ -1,20 +1,29 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: social-service-ingress
-  namespace: javapro-team33
+  name: social-service
+  namespace: test
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  backend:
+    serviceName: social-service-ingress
+    servicePort: 80
   rules:
-    - host: backend-service
+    - host: social-service
       http:
         paths:
-          - path: /
+          - path: /(api)/(.*)
             pathType: Prefix
             backend:
               service:
                 name: social-service
                 port:
-                  number: 8080
+                  number: 80
+          - path: /()(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: front-service
+                port:
+                  number: 80
