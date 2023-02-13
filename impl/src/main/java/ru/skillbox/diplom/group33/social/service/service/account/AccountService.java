@@ -6,11 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group33.social.service.config.storage.CloudinaryEndPoints;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountSearchDto;
-import ru.skillbox.diplom.group33.social.service.model.account.Account_;
+import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.model.account.Account;
+import ru.skillbox.diplom.group33.social.service.model.account.Account_;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group33.social.service.service.notification.NotificationService;
@@ -30,6 +32,8 @@ public class AccountService {
     private final AccountRepository repository;
     private final NotificationService notificationService;
     private final AccountMapper mapper;
+    private final CloudinaryEndPoints cloudinaryEndPoints;
+
 
     public void createAccount(User user) {
         log.info("AccountService - createAccount, user : " + user);
@@ -68,6 +72,9 @@ public class AccountService {
         Long id = SecurityUtils.getJwtUsersId();
         log.info("In AccountService - deleteAccount, id:" + id);
         repository.deleteById(id);
+        AccountDto account = getAccount();
+        account.setPhoto(cloudinaryEndPoints.getDefaultPhoto());
+        repository.save(mapper.convertToAccount(account));
     }
 
     private static Specification<Account> getSpecificationByAuthor(AccountSearchDto searchDto) {
@@ -90,6 +97,14 @@ public class AccountService {
                 .and(likeLowerCase(Account_.city, searchDto.getCity(), true))
                 .and(between(Account_.birthDate,
                         searchDto.getAgeTo() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeTo()),
-                        searchDto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeFrom()),true));
+                        searchDto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeFrom()), true));
+    }
+
+
+    public AccountDto updateAccountPhoto(StorageDto storageDto) {
+        AccountDto account = getAccount();
+        account.setPhoto(storageDto.getPhotoPath());
+        repository.save(mapper.convertToAccount(account));
+        return account;
     }
 }

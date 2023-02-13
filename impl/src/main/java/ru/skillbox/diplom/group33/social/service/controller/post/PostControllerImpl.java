@@ -7,14 +7,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeType;
+import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
 import ru.skillbox.diplom.group33.social.service.service.post.PostService;
 import ru.skillbox.diplom.group33.social.service.service.post.comment.CommentService;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
+
+import java.io.IOException;
+
 
 @Slf4j
 @RestController
@@ -51,6 +56,7 @@ public class PostControllerImpl implements PostController {
     public ResponseEntity<PostDto> update(PostDto dto) {
         return null;
     }
+
 
     @Override
     public ResponseEntity<PostDto> update(Long id, PostDto dto) {
@@ -108,6 +114,11 @@ public class PostControllerImpl implements PostController {
     public ResponseEntity<LikeDto> createPostLike(Long itemId) {
         log.info("IN PostController createPostLike - post id: {}", itemId);
         return ResponseEntity.ok(likeService.changePostLike(itemId, LikeType.POST));
+    }
+
+    @Override
+    public ResponseEntity<StorageDto> addPostPhoto(MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.addPostPhoto(file));
     }
 
     @Override

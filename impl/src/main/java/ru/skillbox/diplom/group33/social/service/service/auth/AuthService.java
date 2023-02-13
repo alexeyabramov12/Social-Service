@@ -37,6 +37,7 @@ public class AuthService {
     private final CaptchaService captchaService;
     private final AccountService accountService;
 
+
     public AuthenticateResponseDto login(@NonNull AuthenticateDto authenticateDto) {
 
         final User user = userRepository.findByEmail(authenticateDto.getEmail()).
@@ -78,4 +79,5 @@ public class AuthService {
 
         return mapper.registrationToUserDto(registrationDto);
     }
+
 }

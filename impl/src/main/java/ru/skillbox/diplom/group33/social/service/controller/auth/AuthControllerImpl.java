@@ -47,4 +47,6 @@ public class AuthControllerImpl implements AuthController {
         log.info("In AuthControllerImpl captcha");
         return ResponseEntity.status(HttpStatus.OK).body(captchaService.getCaptcha());
     }
+
+
 }
