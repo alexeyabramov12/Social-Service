@@ -2,10 +2,10 @@ package ru.skillbox.diplom.group33.social.service.utils.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseSearchDto;
-import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity_;
 
 import javax.persistence.metamodel.SingularAttribute;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.function.Supplier;
 
@@ -14,8 +14,9 @@ public class SpecificationUtils<T> {
         return null;
     };
 
-    public static Specification<BaseEntity> getBaseSpecification(BaseSearchDto searchDto) {
-        return equal(BaseEntity_.id, searchDto.getId(), true).and(equal(BaseEntity_.isDeleted, searchDto.getIsDeleted(), true));
+    public static Specification getBaseSpecification(BaseSearchDto searchDto) {
+        return equal(BaseEntity_.id, searchDto.getId(), true)
+                .and(equal(BaseEntity_.isDeleted, searchDto.getIsDeleted(), true));
     }
 
 
@@ -81,4 +82,20 @@ public class SpecificationUtils<T> {
         });
     }
 
+    public static <T> Specification<T> between(SingularAttribute<T, ZonedDateTime> field,
+                                               ZonedDateTime valueFrom,
+                                               ZonedDateTime valueTo,
+                                               boolean isSkipNullValues) {
+        return nullValueCheck(valueFrom, valueTo, isSkipNullValues, () -> {
+            return ((root, query, builder) -> {
+                if (valueFrom == null) {
+                    return builder.lessThanOrEqualTo(root.get(field), valueTo);
+                } else if (valueTo == null) {
+                    return builder.greaterThanOrEqualTo(root.get(field), valueFrom);
+                } else {
+                    return builder.between(root.get(field), valueFrom, valueTo);
+                }
+            });
+        });
+    }
 }
