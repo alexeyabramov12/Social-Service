@@ -22,9 +22,6 @@ spec:
             - configMapRef:
                 name: social-service-config
           resources:
-            limits:
-              memory: "512Mi"
-              cpu: "400m"
           ports:
             - containerPort: 8080
           env:

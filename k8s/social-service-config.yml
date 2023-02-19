@@ -4,5 +4,6 @@ metadata:
   name: social-service-config
   namespace: javapro-team33
 data:
-  DATASOURCE_HOST: "postgres-service.javapro-team33"
+  DATASOURCE_HOST: postgres-service.javapro-team33
   SWITCH_DROP_FIRST: "false"
+  KAFKA_BROKER: api-kafka.javapro-team33:9092

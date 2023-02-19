@@ -29,8 +29,8 @@ deploy-docker:
     - docker logout
     - docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
   script:
-    - docker build -t team33/social-service .
-    - docker push team33/social-service
+    - docker build -t team33/social-service:1.0.0 .
+    - docker push team33/social-service:1.0.0
   after_script:
     - echo "done deploy docker"
 

@@ -1,17 +1,17 @@
 spring:
- datasource:
+  datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/${POSTGRES_DB:postgres}
+    username: ${POSTGRES_USER:skillbox}
+    password: ${POSTGRES_PASSWORD:skillbox}
 
- liquibase:
+  liquibase:
     enabled: true
-    drop-first: ${SWITCH_DROP_FIRST}
+    drop-first: ${SWITCH_DROP_FIRST:false}
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 
- jpa:
+  jpa:
     show-sql: true
     hibernate:
       ddl-auto: none
@@ -19,6 +19,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         default_schema: public
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:api-kafka.javapro-team33:9092}
+    consumer:
+      auto-offset-reset: earliest
+      group-id: skillbox
+
 jwt:
   secret:
     access: jwtsocialserviceapptywrtywryhwsrtyhsfthshsrhsrth
