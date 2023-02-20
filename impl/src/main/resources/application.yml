@@ -23,8 +23,12 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BROKER:api-kafka.javapro-team33:9092}
     consumer:
-      auto-offset-reset: earliest
       group-id: skillbox
+
+topic:
+  names:
+    notify: notification
+    message: message
 
 jwt:
   secret:

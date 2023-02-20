@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/jwt
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: GBACK
+    password: postgres
 
   liquibase:
     enabled: true
-    drop-first: false
+    drop-first: true
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 
@@ -23,11 +23,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      auto-offset-reset: latest
-      group-id: testLocal
+      group-id: skillbox
 
 topic:
-  name: social-service-topic
+  names:
+    notify: notification
+    message: message
 
 jwt:
   secret:
