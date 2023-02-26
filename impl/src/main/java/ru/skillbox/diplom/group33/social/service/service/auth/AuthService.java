@@ -14,11 +14,12 @@ import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.UserDto;
-import ru.skillbox.diplom.group33.social.service.mapper.auth.UserMapperImpl;
+import ru.skillbox.diplom.group33.social.service.mapper.auth.UserMapper;
 import ru.skillbox.diplom.group33.social.service.model.auth.Role;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 import ru.skillbox.diplom.group33.social.service.repository.auth.RoleRepository;
 import ru.skillbox.diplom.group33.social.service.repository.auth.UserRepository;
+import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
 import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;
 
 import java.util.ArrayList;
@@ -28,13 +29,14 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserMapperImpl mapper;
+    private final UserMapper mapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
 
     private final CaptchaService captchaService;
+    private final AccountService accountService;
 
     public AuthenticateResponseDto login(@NonNull AuthenticateDto authenticateDto) {
 
@@ -74,7 +76,7 @@ public class AuthService {
         registeredUser.setPassword(encoder.encode(registrationDto.getPassword1()));
         registeredUser.setIsDeleted(false);
 
-        userRepository.save(registeredUser);
+        accountService.createAccount(registeredUser);
 
         return mapper.registrationToUserDto(registrationDto);
     }

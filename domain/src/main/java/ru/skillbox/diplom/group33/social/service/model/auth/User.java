@@ -6,15 +6,15 @@ import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 import javax.persistence.*;
 import java.util.List;
 
-@ToString
 @Entity
 @Table(name = "user")
 @Getter
 @Setter
+@ToString
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity {
-
 
     @Column(name = "first_name")
     private String firstName;
@@ -29,8 +29,3 @@ public class User extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 }
-
-
-
-
-
