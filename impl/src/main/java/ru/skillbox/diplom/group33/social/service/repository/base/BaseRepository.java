@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 
+import java.util.Optional;
+
 @NoRepositoryBean
 public interface BaseRepository<E extends BaseEntity> extends JpaRepository<E, Long>, JpaSpecificationExecutor<E> {
 
@@ -13,4 +15,7 @@ public interface BaseRepository<E extends BaseEntity> extends JpaRepository<E, L
     void deleteAll(Iterable<? extends E> entities);
 
     void delete(E entity);
+
+    @Override
+    Optional<E> findById(Long id);
 }

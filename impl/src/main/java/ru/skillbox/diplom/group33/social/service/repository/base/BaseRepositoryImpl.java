@@ -8,6 +8,7 @@ import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+
 @NoRepositoryBean
 public class BaseRepositoryImpl<E extends BaseEntity> extends SimpleJpaRepository<E, Long> implements BaseRepository<E> {
 

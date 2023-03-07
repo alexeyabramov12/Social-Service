@@ -34,7 +34,7 @@ public class AccountControllerImpl implements AccountController {
     @Override
     public ResponseEntity<Page<AccountDto>> search(AccountSearchDto accountSearchDto, Pageable page) {
         log.info("IN AccountControllerImpl - search, accountSearchDto:" + accountSearchDto);
-        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        return ResponseEntity.ok(accountService.search(accountSearchDto,page));
     }
 
     @Override
