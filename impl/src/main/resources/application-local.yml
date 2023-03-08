@@ -2,12 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
-    username: skillbox
-    password: skillbox
-
-
-
-
+    username: postgres
+    password: postgres
 
   liquibase:
     enabled: true
@@ -27,11 +23,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      auto-offset-reset: latest
-      group-id: testLocal
+      group-id: skillbox
 
 topic:
-  name: social-service-topic
+  names:
+    notify: notification
+    message: message
 
 jwt:
   secret:
@@ -41,21 +38,8 @@ jwt:
 whitelist:
   permit:
     - /**/login
-    - /**/post/**
     - /**/captcha
     - /**/register
     - /**/registration
     - /**/v3/api-docs/**
     - /**/swagger-ui/**
-    - /**/storage
-
-cloudinary:
-  cloud_name: dv7luy20w
-  api_key: 658913949174425
-  api_secret: L9cseajDW8sgMGRVl0-oLXTMPmE
-  defaultPhoto: https://res.cloudinary.com/dv7luy20w/image/upload/v1678120930/avatar_v4ylx1.png
-
-
-
-
-

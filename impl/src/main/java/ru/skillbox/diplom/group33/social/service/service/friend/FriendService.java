@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendDto;
@@ -17,11 +19,15 @@ import ru.skillbox.diplom.group33.social.service.model.friend.Friend;
 import ru.skillbox.diplom.group33.social.service.model.friend.Friend_;
 import ru.skillbox.diplom.group33.social.service.repository.friend.FriendRepository;
 import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
+import ru.skillbox.diplom.group33.social.service.service.notification.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.FRIEND_BIRTHDAY;
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.FRIEND_REQUEST;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
 @Service
@@ -31,7 +37,7 @@ public class
 FriendService {
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
-
+    private final NotificationHandler notificationHandler;
     private final AccountService accountService;
 
 
@@ -134,7 +140,8 @@ FriendService {
         Friend friendFrom = friendMapper.friendToFriendFrom(myAccount);
         friendFrom.setToAccountId(id);
         Friend friendTo = friendMapper.friendToFriendTo(friendAccount);
-
+        notificationHandler.sendNotification(friendTo.getId(), friendFrom.getId(),
+                FRIEND_REQUEST, "Запрос в друзья");
         friendRepository.save(friendTo);
         friendRepository.save(friendFrom);
 
@@ -302,6 +309,18 @@ FriendService {
         searchDto.setToAccountId(id);
         searchDto.setStatusCode(StatusCode.REQUEST_FROM);
         return friendRepository.findAll(getSpecification(searchDto)).stream().map(Friend::getFromAccountId).collect(Collectors.toList());
+    }
+
+
+    @Async
+    @Scheduled(cron = "0 0 05 * * ?")
+    public void checkFriendsBirthDay() {
+        log.info("FriendService: sendNotificationBirthDay {}", ZonedDateTime.now());
+        int day = ZonedDateTime.now().getDayOfMonth();
+        int month = ZonedDateTime.now().getMonthValue();
+        friendRepository.findByStatusCodeAndBirthDay(month, day).forEach(friend ->
+                notificationHandler.sendNotification(friend.getToAccountId(),
+                        friend.getFromAccountId(), FRIEND_BIRTHDAY, "Сегодня"));
     }
 
     private Specification<Friend> getSpecification(FriendSearchDto friendSearchDto) {

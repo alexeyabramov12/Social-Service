@@ -3,6 +3,7 @@ package ru.skillbox.diplom.group33.social.service.service.account;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsers;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
@@ -33,6 +36,7 @@ public class AccountService {
     private final NotificationService notificationService;
     private final AccountMapper mapper;
     private final CloudinaryEndPoints cloudinaryEndPoints;
+
 
 
     public void createAccount(User user) {
@@ -76,6 +80,20 @@ public class AccountService {
         account.setPhoto(cloudinaryEndPoints.getDefaultPhoto());
         repository.save(mapper.convertToAccount(account));
     }
+
+    public List<Long> getAccountsIds() {
+        log.info("AccountService - getAccountsIds");
+        Page<Account> pageData = repository.findAll(PageRequest.of(0, 20));
+        List<Long> listIds = pageData.getContent().stream()
+                .map(Account::getId).collect(Collectors.toList());
+        while (pageData.hasNext()) {
+            pageData = repository.findAll(pageData.nextPageable());
+            listIds.addAll(pageData.getContent().stream()
+                    .map(Account::getId).collect(Collectors.toList()));
+        }
+        return listIds;
+    }
+
 
     private static Specification<Account> getSpecificationByAuthor(AccountSearchDto searchDto) {
         return getBaseSpecification(searchDto)

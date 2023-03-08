@@ -5,7 +5,7 @@ import ru.skillbox.diplom.group33.social.service.model.notification.Notification
 
 public class SettingTypeUtils {
 
-    public static NotificationSettings getSettingByType(NotificationSettings settings, SettingsRequest requestSettings) {
+    public static NotificationSettings setSettingByType(NotificationSettings settings, SettingsRequest requestSettings) {
         switch (requestSettings.getNotificationType()) {
             case POST: settings.setPost(requestSettings.getEnable()); break;
             case POST_COMMENT: settings.setPostComment(requestSettings.getEnable()); break;

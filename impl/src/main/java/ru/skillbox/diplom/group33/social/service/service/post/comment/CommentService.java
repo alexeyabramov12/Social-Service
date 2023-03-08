@@ -19,10 +19,14 @@ import ru.skillbox.diplom.group33.social.service.model.post.comment.Comment;
 import ru.skillbox.diplom.group33.social.service.model.post.comment.Comment_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.comment.CommentRepository;
+import ru.skillbox.diplom.group33.social.service.service.notification.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 
 import java.time.ZonedDateTime;
 
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.COMMENT_COMMENT;
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.POST_COMMENT;
+import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.equal;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.getBaseSpecification;
 
@@ -34,6 +38,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentMapper mapper;
     private final LikeService likeService;
+    private final NotificationHandler notificationHandler;
 
 
     public Page<CommentDto> getAll(Long id, Pageable page) {
@@ -53,12 +58,16 @@ public class CommentService {
             Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundResponseStatusException::new);
             post.setCommentsCount(post.getCommentsCount() + 1);
             postRepository.save(post);
+            notificationHandler.sendNotification(post.getAuthorId(), getJwtUsersId(),
+                    POST_COMMENT, "К Вашей записи ".concat("\"" + post.getTitle() + "\""));
             log.info("IN CommentService create post comment - postId: {}, dto: {}", postId, dto);
         } else {
             dto.setCommentType(CommentType.COMMENT);
             Comment comment = commentRepository.findById(dto.getParentId()).orElseThrow(EntityNotFoundResponseStatusException::new);
             comment.setCommentsCount(comment.getCommentsCount() + 1);
             commentRepository.save(comment);
+            notificationHandler.sendNotification(comment.getAuthorId(), getJwtUsersId(),
+                    COMMENT_COMMENT, "\"" + comment.getCommentText() + "\"");
             log.info("IN CommentService create sub comment - postId: {}, dto: {}", postId, dto);
         }
         return mapper.convertToDto(commentRepository.save(mapper.initEntity(dto)));
