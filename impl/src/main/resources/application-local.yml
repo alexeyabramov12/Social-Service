@@ -1,15 +1,13 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/jwt
     username: postgres
-    password: 13asapum
-
-
+    password: GBACK
 
   liquibase:
     enabled: true
-    drop-first: true
+    drop-first: false
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 

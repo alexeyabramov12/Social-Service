@@ -18,4 +18,5 @@ public interface UserMapper {
     @Mapping(target = "password", expression = "java(bc.encode(dto.getPassword1()))")
     User registrationToUser(RegistrationDto dto);
 
+    UserDto convertToDto(User user);
 }

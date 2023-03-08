@@ -1,10 +1,16 @@
 package ru.skillbox.diplom.group33.social.service.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseDto;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Дто пользователя")
 public class UserDto extends BaseDto {
     @Schema(description = "Имя")

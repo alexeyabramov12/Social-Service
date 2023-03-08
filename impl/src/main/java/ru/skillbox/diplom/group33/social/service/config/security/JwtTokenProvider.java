@@ -57,7 +57,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(now.toInstant()))
-                .setExpiration(Date.from(now.plusMinutes(5).toInstant()))
+                .setExpiration(Date.from(now.plusMinutes(60).toInstant()))
                 .signWith(SignatureAlgorithm.HS256, jwtAccessSecret)
                 .compact();
     }

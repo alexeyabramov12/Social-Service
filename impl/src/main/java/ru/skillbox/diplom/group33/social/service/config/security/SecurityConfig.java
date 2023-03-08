@@ -23,16 +23,9 @@ public class SecurityConfig {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private EndPoints endPoints;
-
     private static final String ADMIN_ENDPOINT = "/admin/**";
     private static final String MODERATOR_ENDPOINT = "/moderator/**";
     private static final String LOGOUT_ENDPOINT = "/api/v1/auth/logout";
-
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
