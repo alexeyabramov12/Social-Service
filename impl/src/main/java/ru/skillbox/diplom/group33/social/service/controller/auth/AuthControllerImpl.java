@@ -23,15 +23,18 @@ public class AuthControllerImpl implements AuthController {
     private final AuthService authService;
 
     private final CaptchaService captchaService;
+
     @Override
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody AuthenticateDto authenticateDto) {
         log.info("login controller entered");
         final AuthenticateResponseDto response = authService.login(authenticateDto);
         return ResponseEntity.ok(response);
     }
+
     @Override
     public void logout() {
     }
+
     @Override
     @ResponseStatus(HttpStatus.OK)
     public void register(RegistrationDto registrationDto) {

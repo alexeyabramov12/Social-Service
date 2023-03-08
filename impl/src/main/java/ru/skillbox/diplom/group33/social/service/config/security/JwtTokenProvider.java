@@ -13,12 +13,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 import ru.skillbox.diplom.group33.social.service.model.auth.Role;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -33,8 +37,9 @@ public class JwtTokenProvider {
     private String jwtAccessSecret;
     @Value("${jwt.secret.refresh}")
     private String jwtRefreshSecret;
+    @Value("${jwt.secret.access}")
+    private String secret;
     private final UserDetailsService userDetailsService;
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,7 +62,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(now.toInstant()))
-                .setExpiration(Date.from(now.plusMinutes(60).toInstant()))
+                .setExpiration(Date.from(now.plusMinutes(20).toInstant()))
                 .signWith(SignatureAlgorithm.HS256, jwtAccessSecret)
                 .compact();
     }
@@ -75,15 +80,6 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getName(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
-        }
-        return null;
     }
 
     public boolean validateAccessToken(@NonNull String accessToken) {
@@ -114,6 +110,16 @@ public class JwtTokenProvider {
 
     private String getName(String token) {
         return Jwts.parser().setSigningKey(jwtAccessSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Long getUserId(String token) {
+        Jwt jwt = jwtDecoder().decode(token);
+        return jwt.getClaim("userId");
+    }
+
+    private JwtDecoder jwtDecoder() {
+        SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(key).build();
     }
 
     private List<String> getTypesNames(List<Role> roles) {
