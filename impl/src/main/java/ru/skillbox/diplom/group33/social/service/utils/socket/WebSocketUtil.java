@@ -21,9 +21,9 @@ public class WebSocketUtil {
         return webSocketSession.get(id);
     }
 
-    public static boolean containsSession(WebSocketSession session) {
-        log.info("WebSocketUtil contains session: {}", session);
-        return webSocketSession.containsValue(session);
+    public static boolean containsSession(Long id) {
+        log.info("WebSocketUtil contains session: {}", id);
+        return webSocketSession.containsKey(id);
     }
 
     public static void deleteSession(Long id) {

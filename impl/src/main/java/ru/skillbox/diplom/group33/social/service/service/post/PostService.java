@@ -12,7 +12,7 @@ import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeType;
 import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
-import ru.skillbox.diplom.group33.social.service.exeption.EntityNotFoundResponseStatusException;
+import ru.skillbox.diplom.group33.social.service.exception.EntityNotFoundResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group33.social.service.model.post.Post;
 import ru.skillbox.diplom.group33.social.service.model.post.Post_;

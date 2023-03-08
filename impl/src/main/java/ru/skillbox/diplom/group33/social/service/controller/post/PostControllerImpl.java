@@ -42,7 +42,7 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<Page<PostDto>> getAll(PostSearchDto searchDto, Pageable page) {
-        log.info("IN PostController getAll - search dto: {}", searchDto);
+        log.info("IN PostController getAll - searchDto: {}", searchDto);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getAll(searchDto, page));
     }
 

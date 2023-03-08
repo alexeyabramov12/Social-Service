@@ -13,7 +13,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="generatedTranslationFilesPath" value="C:\Users\vasilevs\Desktop\social_the_best\social-service\domain/target/generated-translation-files" />
+        <option name="generatedTranslationFilesPath" value="C:\SocialService\social-service\domain/target/generated-translation-files" />
         <option name="mapstruct.defaultComponentModel" value="spring" />
         <option name="mapstruct.suppressGeneratorTimestamp" value="true" />
         <processorPath useClasspath="false">
@@ -36,7 +36,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="generatedTranslationFilesPath" value="C:\Users\vasilevs\Desktop\social_the_best\social-service\impl/target/generated-translation-files" />
+        <option name="generatedTranslationFilesPath" value="C:\SocialService\social-service\impl/target/generated-translation-files" />
         <option name="mapstruct.defaultComponentModel" value="spring" />
         <option name="mapstruct.suppressGeneratorTimestamp" value="true" />
         <processorPath useClasspath="false">
@@ -59,7 +59,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="generatedTranslationFilesPath" value="I:\social-service\db/target/generated-translation-files" />
+        <option name="generatedTranslationFilesPath" value="C:\SocialService\social-service\db/target/generated-translation-files" />
         <option name="mapstruct.defaultComponentModel" value="spring" />
         <option name="mapstruct.suppressGeneratorTimestamp" value="true" />
         <processorPath useClasspath="false">
@@ -82,7 +82,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="generatedTranslationFilesPath" value="I:\social-service\api/target/generated-translation-files" />
+        <option name="generatedTranslationFilesPath" value="C:\SocialService\social-service\api/target/generated-translation-files" />
         <option name="mapstruct.defaultComponentModel" value="spring" />
         <option name="mapstruct.suppressGeneratorTimestamp" value="true" />
         <processorPath useClasspath="false">
@@ -102,14 +102,27 @@
         <module name="social-service-api" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api" target="15" />
+      <module name="db" target="15" />
+      <module name="domain" target="15" />
+      <module name="impl" target="15" />
+      <module name="social-service-model" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="social-service" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\Users\vasilevs\Desktop\social_the_best\social-service/target/generated-translation-files" />
-      <module name="social-service-api" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\Users\vasilevs\Desktop\social_the_best\social-service\api/target/generated-translation-files" />
-      <module name="social-service-db" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\Users\vasilevs\Desktop\social_the_best\social-service\db/target/generated-translation-files" />
-      <module name="social-service-domain" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\Users\vasilevs\Desktop\social_the_best\social-service\domain/target/generated-translation-files" />
-      <module name="social-service-impl" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\Users\vasilevs\Desktop\social_the_best\social-service\impl/target/generated-translation-files" />
+      <module name="api" options="" />
+      <module name="db" options="" />
+      <module name="domain" options="" />
+      <module name="impl" options="" />
+      <module name="model" options="-parameters" />
+      <module name="social-service" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service/target/generated-translation-files" />
+      <module name="social-service-api" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service\api/target/generated-translation-files" />
+      <module name="social-service-db" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service\db/target/generated-translation-files" />
+      <module name="social-service-domain" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service\domain/target/generated-translation-files" />
+      <module name="social-service-impl" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service\impl/target/generated-translation-files" />
+      <module name="social-service-model" options="-parameters -Amapstruct.suppressGeneratorTimestamp=true -Amapstruct.defaultComponentModel=spring -AgeneratedTranslationFilesPath=C:\SocialService\social-service\model/target/generated-translation-files" />
     </option>
   </component>
 </project>

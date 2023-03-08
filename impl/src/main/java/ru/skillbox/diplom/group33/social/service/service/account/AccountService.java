@@ -20,6 +20,8 @@ import ru.skillbox.diplom.group33.social.service.service.notification.Notificati
 import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +51,10 @@ public class AccountService {
         log.info("IN AccountService getAccount");
         return mapper.convertToDto(repository.findById(SecurityUtils.getJwtUsersId())
                 .orElseThrow(NullPointerException::new));
+    }
+
+    public List<Account> getAccountsByIds(Collection<Long> accountIds) {
+        return new ArrayList<>(repository.findAllById(accountIds));
     }
 
     public Page<AccountDto> search(AccountSearchDto accountSearchDto, Pageable page) {

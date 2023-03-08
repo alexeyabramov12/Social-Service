@@ -15,11 +15,16 @@ public class CustomKafkaAdminFactory {
 
     protected static final String JSON_TYPES_MAPPINGS = "NotificationInputDto:ru.skillbox.diplom." +
             "group33.social.service.dto.notification.NotificationInputDto, NotificationDto:ru." +
-            "skillbox.diplom.group33.social.service.dto.notification.NotificationDto";
+            "skillbox.diplom.group33.social.service.dto.notification.NotificationDto, MessageShortDto:" +
+            "ru.skillbox.diplom.group33.social.service.dto.dialog.messageShortDto.MessageShortDto," +
+            "StreamingMessageDto:ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto";
 
     protected static final String NOTIFICATION_INPUT_DTO_KEY = "NotificationInputDto";
 
     protected static final String NOTIFICATION_DTO_KEY = "NotificationDto";
+
+    protected static final String MESSAGE_SHORT_DTO_KEY = "MessageShortDto";
+    protected static final String STREAMING_MESSAGE_DTO = "StreamingMessageDto";
 
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
