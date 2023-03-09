@@ -18,14 +18,18 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
+
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        Cookie cookie = Arrays.stream(request.getCookies()).
-                filter(header -> header.getName().equals("jwt")).findFirst().orElse(null);
-        assert cookie != null;
-        String access = cookie.getValue();
+        String access = null;
+        if (request.getCookies() != null) {
+            Cookie cookie = Arrays.stream(request.getCookies()).
+                    filter(header -> header.getName().equals("jwt")).findFirst().orElse(null);
+            access = cookie.getValue();
+        }
 
         if (access != null && !access.equals("") && jwtTokenProvider.validateAccessToken(access)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(access);
