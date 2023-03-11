@@ -2,6 +2,7 @@ package ru.skillbox.diplom.group33.social.service.dto.friend;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseSearchDto;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Schema(description = "Дто поиска друга")
 public class FriendSearchDto extends BaseSearchDto {
     @Schema(description = "Имя")
@@ -35,5 +37,11 @@ public class FriendSearchDto extends BaseSearchDto {
     private Long fromAccountId;
     @Schema(description = "Список id")
     private List<Long> ids;
+
+    public FriendSearchDto(Long fromAccountId, StatusCode statusCode, Long toAccountId) {
+        this.fromAccountId = fromAccountId;
+        this.statusCode = statusCode;
+        this.toAccountId = toAccountId;
+    }
 
 }

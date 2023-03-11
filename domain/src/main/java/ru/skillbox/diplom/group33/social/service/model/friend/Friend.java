@@ -37,4 +37,11 @@ public class Friend extends BaseEntity {
     @Column(name = "to_account_id")
     private Long toAccountId;
     private Long rating;
+
+    public Friend(Long fromAccountId, StatusCode statusCode, Long toAccountId) {
+        setIsDeleted(false);
+        this.fromAccountId = fromAccountId;
+        this.statusCode = statusCode;
+        this.toAccountId = toAccountId;
+    }
 }
