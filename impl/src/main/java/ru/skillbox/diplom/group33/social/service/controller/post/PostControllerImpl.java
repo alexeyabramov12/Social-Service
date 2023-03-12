@@ -107,13 +107,13 @@ public class PostControllerImpl implements PostController {
     @Override
     public ResponseEntity<LikeDto> createPostLike(Long itemId) {
         log.info("IN PostController createPostLike - post id: {}", itemId);
-        return ResponseEntity.ok(likeService.createLike(itemId, LikeType.POST));
+        return ResponseEntity.ok(likeService.changePostLike(itemId, LikeType.POST));
     }
 
     @Override
     public ResponseEntity deletePostLike(Long itemId) {
         log.info("IN PostController deletePostLike - post id: {}", itemId);
-        likeService.deleteLike(itemId, LikeType.POST);
+        likeService.changePostLike(itemId, LikeType.POST);
         return ResponseEntity.ok("like deleted - post id: {" + itemId + "}");
     }
     @Override
@@ -123,22 +123,11 @@ public class PostControllerImpl implements PostController {
     }
 
     @Override
-    public ResponseEntity changeCommentLike1(Long itemId, Long commentId) {
-        log.info("IN PostController deleteCommentLike - post id: {}", itemId);
-        return ResponseEntity.ok(likeService.changeCommentLike1(commentId, LikeType.COMMENT));
-    }
-/*    @Override
-    public ResponseEntity<LikeDto> createCommentLike(Long itemId, Long commentId) {
-        log.info("IN PostController createCommentLike - post id: {}", itemId);
-        return ResponseEntity.ok(likeService.createLike(commentId, LikeType.COMMENT));
-    }
-
-    @Override
     public ResponseEntity deleteCommentLike(Long itemId, Long commentId) {
         log.info("IN PostController deleteCommentLike - post id: {}", itemId);
-        likeService.deleteLike(commentId, LikeType.COMMENT);
-        return ResponseEntity.ok("like deleted - post id: {" + itemId + "}");
-    }*/
+        return ResponseEntity.ok(likeService.changeCommentLike(commentId, LikeType.COMMENT));
+    }
+
 
 
 }

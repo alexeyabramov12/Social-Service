@@ -116,12 +116,20 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     ResponseEntity<LikeDto> createPostLike(@PathVariable Long itemId);
 
     @DeleteMapping(value = "/{itemId}/like")
+    @Operation(summary = "Удаление лайка поста")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Лайк к посту удален",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(allOf = {LikeDto.class}))),
+            @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", content = @Content(mediaType = ""))})
     ResponseEntity deletePostLike(@PathVariable Long itemId);
 
     @PostMapping("/{postId}/comment/{itemId}/like")
     ResponseEntity<LikeDto> changeCommentLike(@PathVariable("postId") Long postId, @PathVariable("itemId") Long itemId);
 
     @DeleteMapping("/{postId}/comment/{itemId}/like")
-    ResponseEntity<LikeDto> changeCommentLike1(@PathVariable("postId") Long postId, @PathVariable("itemId") Long itemId);
+    ResponseEntity<LikeDto> deleteCommentLike(@PathVariable("postId") Long postId, @PathVariable("itemId") Long itemId);
 
 }
