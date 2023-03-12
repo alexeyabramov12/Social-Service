@@ -26,8 +26,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
 import static ru.skillbox.diplom.group33.social.service.utils.notification.SettingTypeUtils.setSettingByType;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 import static ru.skillbox.diplom.group33.social.service.utils.socket.WebSocketUtil.findSession;
 
 @Slf4j
@@ -43,7 +43,7 @@ public class NotificationService {
 
     public NotificationSettingsDto getSettings() {
         log.info("NotificationService: getSettings");
-        NotificationSettings settings = settingsRepository.findByUserId(getJwtUsersId());
+        NotificationSettings settings = settingsRepository.findByUserId(getJwtUserIdFromSecurityContext());
         return settingsMapper.convertToNotificationSettingsDto(settings);
     }
 
@@ -54,7 +54,7 @@ public class NotificationService {
 
     public DefaultResponse updateSetting(SettingsRequest requestSettings) {
         log.info("NotificationService: updateSetting {}", requestSettings);
-        NotificationSettings settings = settingsRepository.findByUserId(getJwtUsersId());
+        NotificationSettings settings = settingsRepository.findByUserId(getJwtUserIdFromSecurityContext());
         settingsRepository.save(setSettingByType(settings, requestSettings));
         return new DefaultResponse(ZonedDateTime.now(),
                 new MessageResponse(true));
@@ -69,7 +69,7 @@ public class NotificationService {
 
     public NotificationCountResponse countNotifications() {
         log.info("NotificationService: countNotifications");
-        Long count = notificationRepository.countAllByReceiverIdAndIsDeleted(getJwtUsersId(), false);
+        Long count = notificationRepository.countAllByReceiverIdAndIsDeleted(getJwtUserIdFromSecurityContext(), false);
         setDeletedNotifications();
         return new NotificationCountResponse(ZonedDateTime.now(), new CountResponse(count));
     }
@@ -77,7 +77,7 @@ public class NotificationService {
     public SentNotificationsDto getNotifications() {
         log.info("NotificationService: getNotifications");
         List<NotificationDataResponse> dataSent = notificationRepository
-                .findAllByReceiverId(getJwtUsersId()).stream()
+                .findAllByReceiverId(getJwtUserIdFromSecurityContext()).stream()
                 .map(notification -> mapper.convertToDataResponse(notification,
                      mapper.convertToAuthorDto(accountRepository
                            .findById(notification.getAuthorId()).orElseThrow())))
@@ -110,7 +110,7 @@ public class NotificationService {
 
     public void setDeletedNotifications() {
         notificationRepository.saveAll(notificationRepository
-                .findAllByReceiverIdAndIsDeleted(getJwtUsersId(), false).stream()
+                .findAllByReceiverIdAndIsDeleted(getJwtUserIdFromSecurityContext(), false).stream()
                 .peek(notification -> notification.setIsDeleted(true))
                 .collect(Collectors.toList()));
     }

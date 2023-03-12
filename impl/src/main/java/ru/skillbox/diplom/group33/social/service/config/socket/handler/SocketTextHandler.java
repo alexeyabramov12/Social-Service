@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import ru.skillbox.diplom.group33.social.service.config.security.JwtTokenProvider;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountOnlineDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.message.MessageMapper;
@@ -24,6 +26,7 @@ import ru.skillbox.diplom.group33.social.service.service.dialog.DialogService;
 import ru.skillbox.diplom.group33.social.service.utils.socket.WebSocketUtil;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -58,12 +61,18 @@ public class SocketTextHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         log.info("SocketTextHandler established: {}", session);
+
+        AccountOnlineDto accountOnlineDto = new AccountOnlineDto(getFromJwtUserId(session), null, true);
+        accountService.changeAccountOnline(accountOnlineDto);
+
         WebSocketUtil.addSession(getFromJwtUserId(session), session);
     }
 
     @Override
     public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) throws Exception {
         log.info("SocketTextHandler closed: {}", session);
+        AccountOnlineDto accountOnlineDto = new AccountOnlineDto(getFromJwtUserId(session), ZonedDateTime.now(), false);
+        accountService.changeAccountOnline(accountOnlineDto);
         WebSocketUtil.deleteSession(getFromJwtUserId(session));
     }
 
@@ -101,6 +110,13 @@ public class SocketTextHandler extends TextWebSocketHandler {
         }
     }
 
+    @KafkaListener(topics = "${topic.names.account}")
+    public void sendToSocketAccountOnline(AccountOnlineDto accountOnlineDto){
+        log.info("Received account online notification: " + accountOnlineDto);
+        if(accountOnlineDto != null){
+            accountService.updateAccountOnline(accountOnlineDto);
+        }
+    }
 
     private void sandMessage(MessageDto messageDto) {
         kafkaDialogTemplate.send(topic, messageDto);

@@ -3,10 +3,12 @@ package ru.skillbox.diplom.group33.social.service.repository.base;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import ru.skillbox.diplom.group33.social.service.exception.EntityNotFoundResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @NoRepositoryBean

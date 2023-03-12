@@ -10,7 +10,7 @@ import ru.skillbox.diplom.group33.social.service.dto.notification.response.Notif
 import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.notification.Notification;
-import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
+import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
 import java.time.ZonedDateTime;
 import java.util.List;

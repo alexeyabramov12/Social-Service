@@ -1,15 +1,19 @@
 package ru.skillbox.diplom.group33.social.service.service.account;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.config.storage.CloudinaryEndPoints;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountOnlineDto;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
+import ru.skillbox.diplom.group33.social.service.exception.EntityNotFoundResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.account.Account_;
@@ -17,7 +21,6 @@ import ru.skillbox.diplom.group33.social.service.model.auth.User;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group33.social.service.repository.friend.FriendRepository;
 import ru.skillbox.diplom.group33.social.service.service.notification.NotificationService;
-import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -25,17 +28,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsers;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserFromSecurityContext;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository repository;
     private final NotificationService notificationService;
     private final AccountMapper mapper;
+    private final KafkaTemplate<String, Object> template;
+    @Value(value = "${topic.names.account}")
+    private String topic;
+
     private final CloudinaryEndPoints cloudinaryEndPoints;
     private final FriendRepository friendRepository;
 
@@ -48,8 +56,11 @@ public class AccountService {
 
     public AccountDto getAccount() {
         log.info("IN AccountService getAccount");
-        return mapper.convertToDto(repository.findById(SecurityUtils.getJwtUsersId())
-                .orElseThrow(NullPointerException::new));
+        if (repository.findById(getJwtUserIdFromSecurityContext()).get().getIsDeleted()) {
+            throw new EntityNotFoundResponseStatusException();
+        }
+        return mapper.convertToDto(repository.findById(getJwtUserIdFromSecurityContext())
+                .orElseThrow(EntityNotFoundResponseStatusException::new));
     }
 
     public List<Account> getAccountsByIds(Collection<Long> accountIds) {
@@ -77,14 +88,14 @@ public class AccountService {
     }
 
     public AccountDto update(AccountDto accountDto) {
-        Long userId = SecurityUtils.getJwtUsersId();
+        Long userId = getJwtUserIdFromSecurityContext();
         Account accountToSave = mapper.convertToAccount(accountDto, repository.findById(userId).orElse(new Account()));
         log.info("IN AccountService - updateAccount, accountDto: " + accountDto);
         return mapper.convertToDto(repository.save(accountToSave));
     }
 
     public void deleteAccount() {
-        Long id = SecurityUtils.getJwtUsersId();
+        Long id = getJwtUserIdFromSecurityContext();
         log.info("In AccountService - deleteAccount, id:" + id);
         repository.deleteById(id);
         AccountDto account = getAccount();
@@ -96,16 +107,16 @@ public class AccountService {
         return getBaseSpecification(searchDto)
                 .and(notIn(Account_.id, searchDto.getBlockedByIds(), true))
                 .and(likeLowerCase(Account_.firstName, searchDto.getAuthor(), true))
-                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true))
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUserFromSecurityContext().getEmail()), true))
                 .or(likeLowerCase(Account_.lastName, searchDto.getAuthor(), true))
-                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true));
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUserFromSecurityContext().getEmail()), true));
     }
 
     private static Specification<Account> getSpecificationByAllParameters(AccountSearchDto searchDto) {
         return getBaseSpecification(searchDto)
                 .and(notIn(Account_.id, searchDto.getBlockedByIds(), true))
                 .and(in(Account_.id, searchDto.getIds(), true))
-                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true))
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUserFromSecurityContext().getEmail()), true))
                 .and(likeLowerCase(Account_.firstName, searchDto.getFirstName(), true))
                 .and(likeLowerCase(Account_.lastName, searchDto.getLastName(), true))
                 .and(equal(Account_.country, searchDto.getCountry(), true))
@@ -120,5 +131,17 @@ public class AccountService {
         account.setPhoto(storageDto.getPhotoPath());
         repository.save(mapper.convertToAccount(account));
         return account;
+    }
+
+    public void updateAccountOnline(AccountOnlineDto accountOnlineDto) {
+        log.info("In AccountService - updateAccountOnline, accountOnlineDto:" + accountOnlineDto);
+        Account accountToSave = mapper.convertToAccount(mapper.convertToAccountDto(accountOnlineDto, new AccountDto()),
+                repository.findById(accountOnlineDto.getId()).orElse(new Account()));
+                repository.save(accountToSave);
+    }
+
+    public void changeAccountOnline(AccountOnlineDto accountOnlineDto) {
+        log.info("In AccountService - changeAccountOnline, accountOnlineDto:" + accountOnlineDto);
+        template.send(topic, accountOnlineDto);
     }
 }

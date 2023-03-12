@@ -17,11 +17,13 @@ public class CustomKafkaAdminFactory {
             "group33.social.service.dto.notification.NotificationInputDto, NotificationDto:ru." +
             "skillbox.diplom.group33.social.service.dto.notification.NotificationDto, MessageDto:" +
             "ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto," +
-            "StreamingMessageDto:ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto";
+            "StreamingMessageDto:ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto, " +
+            "AccountOnlineDto:ru.skillbox.diplom.group33.social.service.dto.account.AccountOnlineDto";
 
     protected static final String NOTIFICATION_INPUT_DTO_KEY = "NotificationInputDto";
 
     protected static final String NOTIFICATION_DTO_KEY = "NotificationDto";
+    protected static final String ACCOUNT_IS_ONLINE = "AccountOnlineDto";
 
     protected static final String MESSAGE_DTO_KEY = "MessageDto";
 
@@ -35,6 +37,10 @@ public class CustomKafkaAdminFactory {
 
     @Value(value = "${topic.names.message}")
     private String topicMessage;
+
+    @Value(value = "${topic.names.account}")
+    private String topicAccount;
+
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -52,4 +58,10 @@ public class CustomKafkaAdminFactory {
     public NewTopic topicMessage() {
         return new NewTopic(topicMessage, 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic topicAccount() {
+        return new NewTopic(topicAccount, 1, (short) 1);
+    }
+
 }
