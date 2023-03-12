@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/jwt
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: GBACK
+    password: test
 
   liquibase:
     enabled: true
@@ -38,6 +38,7 @@ jwt:
 whitelist:
   permit:
     - /**/login
+    - /**/post/**
     - /**/captcha
     - /**/register
     - /**/registration

@@ -57,7 +57,7 @@ public class AuthService {
             return null;
         }
         if (!captchaService.passCaptcha(registrationDto)) {
-            log.warn("user failed captcha");
+            log.warn("In AuthService register: user failed captcha");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
