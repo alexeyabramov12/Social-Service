@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDto extends UserDto {
+
     private String phone;
     private String author;
     private ZonedDateTime birthDateFrom;

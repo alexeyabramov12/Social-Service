@@ -12,8 +12,6 @@ public interface AccountMapper {
 
     AccountDto convertToDto(Account account);
 
-    Account userToAccount(AccountDto accountDto);
-
     @Mapping(target = "isBlocked", constant = "false")
     @Mapping(target = "regDate", expression = "java(ZonedDateTime.now())")
     @Mapping(target = "createOn", expression = "java(ZonedDateTime.now())")

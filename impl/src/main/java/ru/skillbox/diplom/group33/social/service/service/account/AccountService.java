@@ -2,16 +2,25 @@ package ru.skillbox.diplom.group33.social.service.service.account;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountSearchDto;
+import ru.skillbox.diplom.group33.social.service.model.account.Account_;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group33.social.service.service.notification.NotificationService;
 import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
+import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsers;
+import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
 
 @Slf4j
@@ -34,9 +43,13 @@ public class AccountService {
                 .orElseThrow(NullPointerException::new));
     }
 
-    public AccountDto search(AccountSearchDto accountSearchDto, Pageable page) {
+    public Page<AccountDto> search(AccountSearchDto accountSearchDto, Pageable page) {
         log.info("IN AccountService - search, accountSearchDto: " + accountSearchDto);
-        return null;
+        if (accountSearchDto.getAuthor() == null) {
+            return repository.findAll(getSpecificationByAllParameters(accountSearchDto), page).map(mapper::convertToDto);
+        } else {
+            return repository.findAll(getSpecificationByAuthor(accountSearchDto), page).map(mapper::convertToDto);
+        }
     }
 
     public AccountDto getById(Long id) {
@@ -55,5 +68,28 @@ public class AccountService {
         Long id = SecurityUtils.getJwtUsersId();
         log.info("In AccountService - deleteAccount, id:" + id);
         repository.deleteById(id);
+    }
+
+    private static Specification<Account> getSpecificationByAuthor(AccountSearchDto searchDto) {
+        return getBaseSpecification(searchDto)
+                .and(notIn(Account_.id, searchDto.getBlockedByIds(), true))
+                .and(likeLowerCase(Account_.firstName, searchDto.getAuthor(), true))
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true))
+                .or(likeLowerCase(Account_.lastName, searchDto.getAuthor(), true))
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true));
+    }
+
+    private static Specification<Account> getSpecificationByAllParameters(AccountSearchDto searchDto) {
+        return getBaseSpecification(searchDto)
+                .and(notIn(Account_.id, searchDto.getBlockedByIds(), true))
+                .and(in(Account_.id, searchDto.getIds(), true))
+                .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true))
+                .and(likeLowerCase(Account_.firstName, searchDto.getFirstName(), true))
+                .and(likeLowerCase(Account_.lastName, searchDto.getLastName(), true))
+                .and(likeLowerCase(Account_.country, searchDto.getCountry(), true))
+                .and(likeLowerCase(Account_.city, searchDto.getCity(), true))
+                .and(between(Account_.birthDate,
+                        searchDto.getAgeTo() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeTo()),
+                        searchDto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeFrom()),true));
     }
 }
