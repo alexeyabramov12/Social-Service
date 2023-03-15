@@ -16,6 +16,7 @@ import ru.skillbox.diplom.group33.social.service.repository.post.like.LikeReposi
 import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,7 +26,6 @@ public class LikeService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final LikeMapper mapper;
-
 
 
     public void changeLikeAmount(Long itemId, LikeType type, Integer amount) {
@@ -43,10 +43,11 @@ public class LikeService {
         }
     }
 
-    public LikeDto createLike(Long itemId, LikeType likeType) {
+    public LikeDto changePostLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
                 .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
+                .orElse(mapper.initLikeDto(new LikeDto(), likeType, itemId));
+        Optional<Post> post = postRepository.findById(itemId);
         if (like.getId() == null || like.getIsDeleted()) {
             like.setAuthorId(SecurityUtils.getJwtUserIdFromSecurityContext());
             like.setType(likeType);
@@ -54,7 +55,16 @@ public class LikeService {
             like.setIsDeleted(false);
             like.setTime(ZonedDateTime.now());
             changeLikeAmount(itemId, likeType, 1);
-
+            if (isAuthor(post.get().getAuthorId())) {
+                changeMyLike(post.get(), null, true);
+            }
+        } else {
+            changeLikeAmount(itemId, likeType, -1);
+            like.setIsDeleted(true);
+            likeRepository.save(like);
+            if (isAuthor(post.get().getAuthorId())) {
+                changeMyLike(post.get(), null, false);
+            }
         }
         return mapper.convertToDto(likeRepository.save(like));
     }
@@ -62,32 +72,18 @@ public class LikeService {
     public LikeDto changeCommentLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
                 .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        if (like.getId() == null || like.getIsDeleted()) {
-            like.setAuthorId(SecurityUtils.getJwtUserIdFromSecurityContext());
-            like.setType(likeType);
-            like.setItemId(itemId);
-            like.setIsDeleted(false);
-            like.setTime(ZonedDateTime.now());
-            changeLikeAmount(itemId, likeType, 1);
-        }
-        return mapper.convertToDto(likeRepository.save(like));
-    }
-    public LikeDto changeCommentLike1(Long itemId, LikeType likeType) {
-        Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        Comment comment = commentRepository.findById(itemId).orElse(new Comment());
-        boolean isAuthor = comment.getAuthorId().equals(SecurityUtils.getJwtUserIdFromSecurityContext());
+                .orElse(mapper.initLikeDto(new LikeDto(), likeType, itemId));
+        Optional<Comment> comment = commentRepository.findById(itemId);
         if (like.getId() == null) {
-            //Like like = mapper.initLikeDto(new LikeDto(), likeType, itemId);
             changeLikeAmount(itemId, likeType, 1);
-            changeMyLike(null, comment, true);
+            if (isAuthor(comment.get().getAuthorId())) {
+                changeMyLike(null, comment.get(), true);
+            }
             return mapper.convertToDto(likeRepository.save(like));
         } else {
             like.setIsDeleted(!like.getIsDeleted());
-            if (isAuthor) {
-                changeMyLike(null, comment, false);
+            if (isAuthor(comment.get().getAuthorId())) {
+                changeMyLike(null, comment.get(), !comment.get().getMyLike());
             }
             likeRepository.save(like);
             changeLikeAmount(itemId, likeType, like.getIsDeleted() ? -1 : 1);
@@ -95,16 +91,6 @@ public class LikeService {
         return mapper.convertToDto(like);
     }
 
-    public void deleteLike(Long itemId, LikeType likeType) {
-        Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        if (like.getId() != null) {
-            changeLikeAmount(itemId, likeType, -1);
-            like.setIsDeleted(true);
-            likeRepository.save(like);
-        }
-    }
 
     public Boolean getMyLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
@@ -117,71 +103,10 @@ public class LikeService {
     }
 
 
-
-    /*public LikeDto createLike(Long itemId, LikeType likeType) {
-        Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        Post post = postRepository.findById(itemId).orElse(new Post());
-        boolean isAuthor = post.getAuthorId().equals(SecurityUtils.getJwtUserIdFromSecurityContext());
-        if (like.getId() == null) {
-            LikeDto likeDto = mapper.initLikeDto(new LikeDto(), likeType, itemId);
-            if (isAuthor) {
-                changeMyLike(post, null, true);
-            }
-            changeLikeAmount(itemId, likeType, 1);
-            return mapper.convertToDto(likeRepository.save(mapper.convertToEntity(likeDto)));
-        } else {
-            like.setIsDeleted(false);
-            if (isAuthor) {
-                changeMyLike(post, null, true);
-            }
-            likeRepository.save(like);
-            changeLikeAmount(itemId, likeType, 1);
-        }
-        return mapper.convertToDto(like);
+    private boolean isAuthor(Long itemId) {
+        return itemId.equals(SecurityUtils.getJwtUserIdFromSecurityContext());
     }
 
-    public LikeDto changeCommentLike(Long itemId, LikeType likeType) {
-        Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        Comment comment = commentRepository.findById(itemId).orElse(new Comment());
-        boolean isAuthor = comment.getAuthorId().equals(SecurityUtils.getJwtUserIdFromSecurityContext());
-        if (like.getId() == null) {
-            LikeDto likeDto = mapper.initLikeDto(new LikeDto(), likeType, itemId);
-            changeLikeAmount(itemId, likeType, 1);
-            changeMyLike(null, comment, true);
-            return mapper.convertToDto(likeRepository.save(mapper.convertToEntity(likeDto)));
-        } else {
-            like.setIsDeleted(!like.getIsDeleted());
-            if (isAuthor) {
-                changeMyLike(null, comment, false);
-            }
-            likeRepository.save(like);
-            changeLikeAmount(itemId, likeType, like.getIsDeleted() ? -1 : 1);
-        }
-        return mapper.convertToDto(like);
-    }
-
-
-    public void deleteLike(Long itemId, LikeType likeType) {
-        Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
-                .orElse(new Like());
-        Post post = postRepository.findById(itemId).orElse(new Post());
-        boolean isAuthor = post.getAuthorId().equals(SecurityUtils.getJwtUserIdFromSecurityContext());
-        if (like.getId() != null) {
-            changeLikeAmount(itemId, likeType, -1);
-            if (isAuthor) {
-                changeMyLike(post, null, false);
-            }
-            like.setIsDeleted(true);
-            likeRepository.save(like);
-        }
-    }
-
-    */
     private void changeMyLike(Post post, Comment comment, boolean like) {
         if (post != null) {
             post.setMyLike(like);
