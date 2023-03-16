@@ -2,6 +2,11 @@ package ru.skillbox.diplom.group33.social.service.dto.post;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.time.ZonedDateTime;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseDto;
 

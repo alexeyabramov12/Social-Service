@@ -7,9 +7,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeType;
+import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
 import ru.skillbox.diplom.group33.social.service.exeption.EntityNotFoundResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group33.social.service.model.post.Post;
@@ -19,8 +21,10 @@ import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
+import ru.skillbox.diplom.group33.social.service.service.storage.StorageService;
 
 import javax.persistence.criteria.Join;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -33,6 +37,8 @@ import static ru.skillbox.diplom.group33.social.service.utils.specification.Spec
 public class PostService {
 
     private final PostRepository repository;
+    private final StorageService storageService;
+
     private final PostMapper mapper;
     private final TagService tagService;
     private final LikeService likeService;
@@ -45,7 +51,7 @@ public class PostService {
     public Page<PostDto> getAll(PostSearchDto searchDto, Pageable page) {
         log.info("IN PostService getAll - searchDto: {}", searchDto);
         Page<Post> posts = repository.findAll(getSpecification(searchDto), page);
-        return new PageImpl<>(posts.map(e-> {
+        return new PageImpl<>(posts.map(e -> {
             PostDto dto = mapper.convertToDto(e);
             dto.setMyLike(likeService.getMyLike(dto.getId(), LikeType.POST));
             return dto;
@@ -92,6 +98,11 @@ public class PostService {
             Join<Post, Tag> join = root.join(Post_.tags);
             return builder.in(join.get(Tag_.NAME)).value(tags);
         };
+    }
+
+    public StorageDto addPostPhoto(MultipartFile file) throws IOException {
+        StorageDto storageResult = storageService.uploadFile(file);
+        return storageResult;
     }
 
 }

@@ -3,6 +3,7 @@ package ru.skillbox.diplom.group33.social.service.dto.auth;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 @Data
 @AllArgsConstructor
 @Schema(description = "Дто ответа аутентификации")

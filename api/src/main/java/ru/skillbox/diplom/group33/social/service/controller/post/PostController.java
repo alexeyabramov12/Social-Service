@@ -11,12 +11,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.diplom.group33.social.service.controller.base.BaseController;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeDto;
+import ru.skillbox.diplom.group33.social.service.dto.storage.StorageDto;
 import ru.skillbox.diplom.group33.social.service.utils.path.PathConstant;
+
+import java.io.IOException;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @Tag(name = "Система управления постами")
 @RequestMapping(PathConstant.URL + "post")
@@ -62,12 +68,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @PutMapping("/{id}")
     @Operation(summary = "Обновление поста")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешное обновление", content = @Content(mediaType = "")),
-            @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
-            @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
-            @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
-            @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
-    ResponseEntity<PostDto> update(@PathVariable Long id, @RequestBody PostDto dto);
+        @ApiResponse(responseCode = "200", description = "Успешное обновление", content = @Content(mediaType = "")),
+        @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
+        @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
+        @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
+        @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
+    ResponseEntity<PostDto> update(@RequestBody Long id, PostDto dto);
 
     @Override
     @DeleteMapping(value = "{id}")
@@ -131,5 +137,18 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
 
     @DeleteMapping("/{postId}/comment/{itemId}/like")
     ResponseEntity<LikeDto> deleteCommentLike(@PathVariable("postId") Long postId, @PathVariable("itemId") Long itemId);
+
+
+
+    @PostMapping(value = "/storagePostPhoto", consumes = {MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "Создание поста")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное создание", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
+    ResponseEntity<StorageDto> addPostPhoto(@RequestParam(value = "file", required = false)
+                                     MultipartFile request) throws IOException;
 
 }

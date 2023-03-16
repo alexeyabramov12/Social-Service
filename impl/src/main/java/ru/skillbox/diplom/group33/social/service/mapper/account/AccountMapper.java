@@ -1,8 +1,8 @@
 package ru.skillbox.diplom.group33.social.service.mapper.account;
 
 import org.mapstruct.*;
-import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
+import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 
 import java.time.ZonedDateTime;
@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
 public interface AccountMapper {
 
     AccountDto convertToDto(Account account);
+
+    Account convertToAccount(AccountDto accountDto);
 
     @Mapping(target = "isBlocked", constant = "false")
     @Mapping(target = "regDate", expression = "java(ZonedDateTime.now())")

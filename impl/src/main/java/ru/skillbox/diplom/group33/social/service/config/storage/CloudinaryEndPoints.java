@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.config.security;
+package ru.skillbox.diplom.group33.social.service.config.storage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "whitelist")
+@ConfigurationProperties(prefix = "cloudinary")
 @ConfigurationPropertiesScan
-public class EndPoints {
-    private String[] permit;
+public class CloudinaryEndPoints {
+
+    private String cloud_name;
+    private String api_key;
+    private String api_secret;
+    private String defaultPhoto;
 }
-
-
