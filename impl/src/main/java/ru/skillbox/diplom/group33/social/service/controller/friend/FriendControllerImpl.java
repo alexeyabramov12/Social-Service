@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendSearchDto;
-import ru.skillbox.diplom.group33.social.service.dto.friend.RecommendationFriendsDto;
 import ru.skillbox.diplom.group33.social.service.service.friend.FriendService;
 
 import java.util.List;
@@ -52,19 +51,19 @@ public class FriendControllerImpl implements FriendController {
     }
 
     @Override
-    public ResponseEntity<FriendDto> approveFriend(Long id) {
+    public ResponseEntity<List<FriendDto>> approveFriend(Long id) {
         log.info("FriendControllerImpl : approve {}", id);
         return ResponseEntity.ok(friendService.approveFriend(id));
     }
 
     @Override
-    public ResponseEntity<FriendDto> blockFriend(Long id) {
+    public void blockFriend(Long id) {
         log.info("FriendControllerImpl : block {}", id);
-        return ResponseEntity.ok(friendService.blockFriend(id));
+        friendService.blockFriend(id);
     }
 
     @Override
-    public ResponseEntity<FriendDto> addFriend(Long id) {
+    public ResponseEntity<List<FriendDto>> addFriend(Long id) {
         log.info("FriendControllerImpl : add {}", id);
         return ResponseEntity.ok(friendService.addFriend(id));
     }
@@ -75,7 +74,7 @@ public class FriendControllerImpl implements FriendController {
     }
 
     @Override
-    public ResponseEntity<List<RecommendationFriendsDto>> getRecommendations() {
+    public ResponseEntity<List<FriendDto>> getRecommendations() {
         return ResponseEntity.ok(friendService.getRecommendations());
     }
 
@@ -85,8 +84,8 @@ public class FriendControllerImpl implements FriendController {
     }
 
     @Override
-    public ResponseEntity<FriendDto> countFriendsOffers() {
-        return null;
+    public Long countFriendsOffers() {
+        return friendService.getCount();
     }
 
     @Override

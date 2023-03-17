@@ -44,4 +44,12 @@ public class Friend extends BaseEntity {
         this.statusCode = statusCode;
         this.toAccountId = toAccountId;
     }
+
+    public Friend(Long fromAccountId, StatusCode statusCode, Long toAccountId, StatusCode previousStatusCode) {
+        setIsDeleted(false);
+        this.fromAccountId = fromAccountId;
+        this.statusCode = statusCode;
+        this.toAccountId = toAccountId;
+        this.previousStatusCode = previousStatusCode;
+    }
 }
