@@ -28,9 +28,9 @@ public interface NotificationSettingsMapper {
             " new SettingsRequest(settings.getFriendRequest(), NotificationType.FRIEND_REQUEST)," +
             " new SettingsRequest(settings.getFriendBirthday(), NotificationType.FRIEND_BIRTHDAY)," +
             " new SettingsRequest(settings.getSendEmailMessage(), NotificationType.SEND_EMAIL_MESSAGE)))")
-    NotificationSettingsDto convertToNotificationSettingsDTO(NotificationSettings settings);
+    NotificationSettingsDto convertToNotificationSettingsDto(NotificationSettings settings);
 
-    SettingsDto convertToSettingsDTO(NotificationSettings settings);
+    SettingsDto convertToSettingsDto(NotificationSettings settings);
 
     NotificationSettings convertToNotificationSettings(SettingsDto settingsDTO);
 }

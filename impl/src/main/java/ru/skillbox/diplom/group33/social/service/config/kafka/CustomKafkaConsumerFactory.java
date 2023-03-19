@@ -38,7 +38,7 @@ public class CustomKafkaConsumerFactory {
         Map<String, Object> propertiesFactory = new HashMap<>();
         propertiesFactory.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         propertiesFactory.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        propertiesFactory.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        propertiesFactory.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         propertiesFactory.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propertiesFactory.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(propertiesFactory);

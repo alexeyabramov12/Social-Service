@@ -14,13 +14,14 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Дто уведомления")
 public class NotificationDto extends BaseDto {
 
     @Schema(description = "Дата и время с учетом локации", example = "07 Mar 2023 21:20:25 Moscow/Europe")
     private ZonedDateTime time;
-    @Schema(description = "Id автора", example = "345")
+    @Schema(description = "Идентификатор автора уведомления", example = "345")
     private Long authorId;
-    @Schema(description = "Id целевого получателя", example = "232")
+    @Schema(description = "Идентификатор получателя уведомления", example = "232")
     private Long userId;
     @Schema(description = "Часть контента", example = "Заголовок поста")
     private String content;

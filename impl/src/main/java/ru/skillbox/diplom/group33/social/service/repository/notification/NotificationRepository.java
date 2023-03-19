@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface NotificationRepository extends BaseRepository<Notification> {
 
-    Long countAllByReceiverId(Long receiverId);
+    Long countAllByReceiverIdAndIsDeleted(Long receiverId, Boolean isDeleted);
 
-    List<Notification> findAllByReceiverId(Long ReceiverId);
+    List<Notification> findAllByReceiverIdAndIsDeleted(Long ReceiverId, Boolean isDeleted);
+
+    List<Notification> findAllByReceiverId(Long jwtUsersId);
 }

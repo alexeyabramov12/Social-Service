@@ -19,6 +19,7 @@ import ru.skillbox.diplom.group33.social.service.model.post.Post_;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group33.social.service.service.notification.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
 import ru.skillbox.diplom.group33.social.service.service.storage.StorageService;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.POST;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
 
@@ -36,6 +38,7 @@ import static ru.skillbox.diplom.group33.social.service.utils.specification.Spec
 @RequiredArgsConstructor
 public class PostService {
 
+    private final NotificationHandler notificationHandler;
     private final PostRepository repository;
     private final StorageService storageService;
 
@@ -62,6 +65,7 @@ public class PostService {
         log.info("IN PostService create - dto {}", dto);
         Post post = mapper.initEntity(dto);
         post.setTags(tagService.create(post, dto.getTags()));
+        notificationHandler.sendNotificationReceivers(POST, post.getTitle());
         return mapper.convertToDto(repository.save(post));
     }
 
