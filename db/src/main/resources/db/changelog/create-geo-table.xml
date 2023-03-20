@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create_table_country" author="Kolesiko">
+        <createTable tableName="country">
+            <column autoIncrement="true" name="id" type="bigint">
+                ‹constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="is_deleted" type="boolean">
+                ‹constraints nullable="false">
+            </column>
+            <column name="title" type="varchar(255)">
+                ‹constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create_table_city" author="Kolesiko">
+        <createTable tableName="city">
+            <column autoIncrement="true" name="id" type="bigint">
+                ‹constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="is_deleted" type="boolean">
+                ‹constraints nullable="false">
+            </column>
+            <column name="title" type="varchar(255)">
+                ‹constraints nullable="false"/>
+            </column>
+            <column name="country_id" type="bigint">
+                ‹constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="insert_COUNTRY" author="Kolesiko">
+        <insert tableName="country">
+            <column name="title" value="Russia"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+
+        <insert tableName="country">
+            <column name="title" value="Belarus"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert_CITY" author="Kolesiko">
+
+        <insert tableName="city">
+            <column name="title" value="Москва"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Санкт-Петербург"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Новосибирск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Екатеринбург"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Казань"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Нижний Новгород"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Челябинск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Красноярск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Самара"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Уфа"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="1"/>
+        </insert>
+
+        <insert tableName="city">
+            <column name="title" value="Минск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Гомель"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Витебск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Пинск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Могилёв"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Гродно"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Брест"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Бобруйск"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Барановичи"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+        <insert tableName="city">
+            <column name="title" value="Борисов"/>
+            <column name="is_deleted" value="false"/>
+            <column name="country_id" value="2"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>
