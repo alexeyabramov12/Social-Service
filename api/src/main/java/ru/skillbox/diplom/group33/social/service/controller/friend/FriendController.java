@@ -14,7 +14,6 @@ import ru.skillbox.diplom.group33.social.service.controller.base.BaseController;
 import ru.skillbox.diplom.group33.social.service.dto.auth.UserDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendSearchDto;
-import ru.skillbox.diplom.group33.social.service.dto.friend.RecommendationFriendsDto;
 import ru.skillbox.diplom.group33.social.service.utils.path.PathConstant;
 
 import java.util.List;
@@ -90,7 +89,7 @@ public interface FriendController extends BaseController<FriendDto, FriendSearch
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))
     })
-    ResponseEntity<FriendDto> approveFriend(@PathVariable Long id);
+    ResponseEntity<List<FriendDto>> approveFriend(@PathVariable Long id);
 
     @PutMapping("block/{id}")
     @Operation(summary = "Заблокировать друга по id")
@@ -101,7 +100,7 @@ public interface FriendController extends BaseController<FriendDto, FriendSearch
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))
     })
-    ResponseEntity<FriendDto> blockFriend(@PathVariable Long id);
+    void blockFriend(@PathVariable Long id);
 
     @PostMapping("{id}/request")
     @Operation(summary = "Добавить друга по id")
@@ -112,7 +111,7 @@ public interface FriendController extends BaseController<FriendDto, FriendSearch
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))
     })
-    ResponseEntity<FriendDto> addFriend(@PathVariable Long id);
+    ResponseEntity<List<FriendDto>> addFriend(@PathVariable Long id);
     
     @PostMapping("subscribe/{id}")
     @Operation(summary = "Подписаться на друга по id")
@@ -133,7 +132,7 @@ public interface FriendController extends BaseController<FriendDto, FriendSearch
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))
     })
-    ResponseEntity<List<RecommendationFriendsDto>> getRecommendations();
+    ResponseEntity<List<FriendDto>> getRecommendations();
 
     @GetMapping("friendId")
     @Operation(summary = "Получить id друзей")
@@ -155,7 +154,7 @@ public interface FriendController extends BaseController<FriendDto, FriendSearch
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))
     })
-    ResponseEntity<FriendDto> countFriendsOffers();
+    Long countFriendsOffers();
 
     @GetMapping("blockFriendId")
     @Operation(summary = "Получить список заблокированных друзей")
