@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentType;
@@ -19,7 +20,6 @@ import ru.skillbox.diplom.group33.social.service.model.post.comment.Comment;
 import ru.skillbox.diplom.group33.social.service.model.post.comment.Comment_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.comment.CommentRepository;
-import ru.skillbox.diplom.group33.social.service.service.notification.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 
 import java.time.ZonedDateTime;

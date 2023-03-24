@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.config.socket;
+package ru.skillbox.diplom.group33.social.service.config.socket.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

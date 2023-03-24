@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.DialogDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.DialogSearchDto;
@@ -39,8 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.MESSAGE;
 import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
-import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
+import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.equal;
+import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.getBaseSpecification;
 
 
 @Slf4j
@@ -50,6 +53,7 @@ public class DialogService {
 
     private final DialogRepository dialogRepository;
     private final MessageRepository messageRepository;
+    private final NotificationHandler notificationHandler;
     private final DialogMapper dialogMapper;
     private final AccountMapper accountMapper;
     private final MessageMapper messageMapper;
@@ -127,6 +131,8 @@ public class DialogService {
         messageDto.setIsDeleted(false);
 
         Message message = messageRepository.save(messageMapper.convertToEntity(messageDto));
+        notificationHandler.sendNotification(message.getRecipientId(), message.getAuthorId(),
+                MESSAGE, "\"" + message.getMessageText() + "\"");
         log.info("In DialogService createMessage: create message - {}", message);
 
         dialog.setLastMessage(message);

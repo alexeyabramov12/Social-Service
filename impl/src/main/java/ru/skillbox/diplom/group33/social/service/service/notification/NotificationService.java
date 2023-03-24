@@ -86,14 +86,12 @@ public class NotificationService {
     }
 
     @KafkaListener(topics = "${topic.names.notify}")
-    public NotificationDto addNotification(NotificationInputDto notificationInput) {
+    public void addNotification(NotificationInputDto notificationInput) {
         log.info("Consumed NotificationService: addNotification {}", notificationInput);
         Notification notification = mapper.convertToNotification(notificationInput);
         NotificationDto notificationDto =  mapper.convertToNotificationDto(
                 notificationRepository.save(notification));
         sendStreamingNotification(notificationDto);
-
-        return notificationDto;
     }
 
     public void sendStreamingNotification(NotificationDto notificationDto) {

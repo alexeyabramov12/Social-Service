@@ -44,3 +44,9 @@ whitelist:
     - /**/registration
     - /**/v3/api-docs/**
     - /**/swagger-ui/**
+
+cloudinary:
+  cloud_name: dv7luy20w
+  api_key: 658913949174425
+  api_secret: L9cseajDW8sgMGRVl0-oLXTMPmE
+  defaultPhoto: https://res.cloudinary.com/dv7luy20w/image/upload/v1678120930/avatar_v4ylx1.png
