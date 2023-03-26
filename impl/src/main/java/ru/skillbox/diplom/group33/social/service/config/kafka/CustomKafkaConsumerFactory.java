@@ -14,14 +14,15 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
 import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 import ru.skillbox.diplom.group33.social.service.dto.notification.NotificationDto;
 import ru.skillbox.diplom.group33.social.service.dto.notification.NotificationInputDto;
+import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.skillbox.diplom.group33.social.service.config.kafka.CustomKafkaAdminFactory.NOTIFICATION_DTO_KEY;
-import static ru.skillbox.diplom.group33.social.service.config.kafka.CustomKafkaAdminFactory.NOTIFICATION_INPUT_DTO_KEY;
+import static ru.skillbox.diplom.group33.social.service.config.kafka.CustomKafkaAdminFactory.*;
 
 
 @EnableKafka
@@ -53,6 +54,8 @@ public class CustomKafkaConsumerFactory {
         Map<String, Class<?>> mappings = new HashMap<>();
         mappings.put(NOTIFICATION_INPUT_DTO_KEY, NotificationInputDto.class);
         mappings.put(NOTIFICATION_DTO_KEY, NotificationDto.class);
+        mappings.put(MESSAGE_SHORT_DTO_KEY, MessageDto.class);
+        mappings.put(STREAMING_MESSAGE_DTO, StreamingMessageDto.class);
         typeMapper.setIdClassMapping(mappings);
         converter.setTypeMapper(typeMapper);
         return converter;
