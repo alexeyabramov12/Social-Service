@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Post extends BaseEntity {
 
-    @Column(name = "time", columnDefinition = "timestamp with time zone")
+    @Column(name = "time", columnDefinition = "timestamp with time zone", nullable = false)
     private ZonedDateTime time;
     @Column(name = "time_changed", columnDefinition = "timestamp with time zone", nullable = false)
     private ZonedDateTime timeChanged;
@@ -48,7 +48,7 @@ public class Post extends BaseEntity {
     private Boolean myLike;
     @Column(name = "image_path")
     private String imagePath;
-    @Column(name = "publish_date", columnDefinition = "timestamp with time zone")
+    @Column(name = "publish_date", columnDefinition = "timestamp with time zone", nullable = false)
     private ZonedDateTime publishDate;
 
 

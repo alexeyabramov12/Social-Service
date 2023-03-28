@@ -36,20 +36,26 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<PostDto> getById(Long id) {
-        log.info("IN PostController getById - id: {}", id);
+        log.info("IN PostControllerImpl getById - id: {}", id);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getById(id));
     }
 
     @Override
     public ResponseEntity<Page<PostDto>> getAll(PostSearchDto searchDto, Pageable page) {
-        log.info("IN PostController getAll - searchDto: {}", searchDto);
+        log.info("IN PostControllerImpl getAll - searchDto: {}", searchDto);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getAll(searchDto, page));
     }
 
     @Override
     public ResponseEntity<PostDto> create(PostDto dto) {
-        log.info("IN PostController create - dto: {}", dto);
+        log.info("IN PostControllerImpl create - dto: {}", dto);
         return ResponseEntity.status(HttpStatus.OK).body(postService.create(dto));
+    }
+
+    @Override
+    public ResponseEntity<PostDto> create(Long publishDate, PostDto dto) {
+        log.info("IN PostControllerImpl create - publishDate - {}, dto {}", publishDate, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.createWithPublishDate(publishDate, dto));
     }
 
     @Override
@@ -57,16 +63,15 @@ public class PostControllerImpl implements PostController {
         return null;
     }
 
-
     @Override
     public ResponseEntity<PostDto> update(Long id, PostDto dto) {
-        log.info("IN PostController update - id: {} dto: {}", id, dto);
+        log.info("IN PostControllerImpl update - id: {} dto: {}", id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(postService.update(id, dto));
     }
 
     @Override
     public ResponseEntity deleteById(Long id) {
-        log.info("IN PostController deleteById - id: {}", id);
+        log.info("IN PostControllerImpl deleteById - id: {}", id);
         postService.deleteById(id);
         return ResponseEntity.ok("Post - id: {" + id + "} DELETED");
     }
@@ -77,32 +82,32 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<Page<CommentDto>> getComments(Long id, Pageable page) {
-        log.info("IN PostController getAllComment - get comments withs post id: {}", id);
+        log.info("IN PostControllerImpl getAllComment - get comments withs post id: {}", id);
         return ResponseEntity.ok(commentService.getAll(id, page));
     }
 
     @Override
     public ResponseEntity<CommentDto> createComment(Long id, CommentDto dto) {
-        log.info("IN PostController createComment - dto: {}", dto);
+        log.info("IN PostControllerImpl createComment - dto: {}", dto);
         return ResponseEntity.ok(commentService.create(id, dto));
     }
 
     @Override
     public ResponseEntity<CommentDto> updateComment(CommentDto dto, Long postId, Long commentId) {
-        log.info("IN PostController updateComment - dto: {}", dto);
+        log.info("IN PostControllerImpl updateComment - dto: {}", dto);
         return ResponseEntity.ok(commentService.update(dto, postId, commentId));
     }
 
     @Override
     public ResponseEntity deleteByIdComment(Long postId, Long commentId) {
-        log.info("IN PostController deleteByIdComment - id: {}", commentId);
+        log.info("IN PostControllerImpl deleteByIdComment - id: {}", commentId);
         commentService.deleteById(postId, commentId);
         return ResponseEntity.ok("Comment - id: {" + commentId + "} DELETED");
     }
 
     @Override
     public ResponseEntity<Page<CommentDto>> getSubcomment(Long postId, Long commentId, Pageable page) {
-        log.info("IN PostController getSubComment - id: {}", commentId);
+        log.info("IN PostControllerImpl getSubComment - id: {}", commentId);
         return ResponseEntity.ok(commentService.getAllSubComment(postId, commentId, page));
     }
 
@@ -112,30 +117,31 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<LikeDto> createPostLike(Long itemId) {
-        log.info("IN PostController createPostLike - post id: {}", itemId);
+        log.info("IN PostControllerImpl createPostLike - post id: {}", itemId);
         return ResponseEntity.ok(likeService.changePostLike(itemId, LikeType.POST));
     }
 
     @Override
     public ResponseEntity<StorageDto> addPostPhoto(MultipartFile file) throws IOException {
+        log.info("IN PostControllerImpl addPostPhoto");
         return ResponseEntity.status(HttpStatus.OK).body(postService.addPostPhoto(file));
     }
 
     @Override
     public ResponseEntity deletePostLike(Long itemId) {
-        log.info("IN PostController deletePostLike - post id: {}", itemId);
+        log.info("IN PostControllerImpl deletePostLike - post id: {}", itemId);
         likeService.changePostLike(itemId, LikeType.POST);
         return ResponseEntity.ok("like deleted - post id: {" + itemId + "}");
     }
     @Override
     public ResponseEntity<LikeDto> changeCommentLike(Long itemId, Long commentId) {
-        log.info("IN PostController createCommentLike - post id: {}", itemId);
+        log.info("IN PostControllerImpl createCommentLike - post id: {}", itemId);
         return ResponseEntity.ok(likeService.changeCommentLike(commentId, LikeType.COMMENT));
     }
 
     @Override
     public ResponseEntity deleteCommentLike(Long itemId, Long commentId) {
-        log.info("IN PostController deleteCommentLike - post id: {}", itemId);
+        log.info("IN PostControllerImpl deleteCommentLike - post id: {}", itemId);
         return ResponseEntity.ok(likeService.changeCommentLike(commentId, LikeType.COMMENT));
     }
 

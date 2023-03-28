@@ -24,7 +24,7 @@ public interface PostMapper {
 
 
     @Mapping(target = "time", expression = "java(ZonedDateTime.now())")
-    @Mapping(target = "publishDate", expression = "java(ZonedDateTime.now())")
+    @Mapping(target = "publishDate", expression = "java(dto.getPublishDate() == null ? ZonedDateTime.now() : dto.getPublishDate())")
     @Mapping(target = "timeChanged", expression = "java(ZonedDateTime.now())")
     @Mapping(target = "authorId", expression = "java(SecurityUtils.getJwtUserIdFromSecurityContext())")
     @Mapping(target = "postType", expression = "java(PostType.POSTED)")
@@ -34,9 +34,9 @@ public interface PostMapper {
     @Mapping(target = "commentsCount", constant = "0")
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "myLike", constant = "false")
-    @Mapping(target = "title", expression = "java(postDto.getTitle().trim())")
-    @Mapping(target = "postText", expression = "java(postDto.getPostText().trim())")
-    Post initEntity(PostDto postDto);
+    @Mapping(target = "title", expression = "java(dto.getTitle().trim())")
+    @Mapping(target = "postText", expression = "java(dto.getPostText().trim())")
+    Post initEntity(PostDto dto);
 
     @Mapping(target = "id", expression = "java(post.getId())")
     @Mapping(target = "time", expression = "java(post.getTime())")
@@ -50,10 +50,10 @@ public interface PostMapper {
     @Mapping(target = "commentsCount", expression = "java(post.getCommentsCount())")
     @Mapping(target = "myLike", expression = "java(post.getMyLike())")
     @Mapping(target = "imagePath", expression = "java(post.getImagePath())")
-    @Mapping(target = "title", expression = "java(postDto.getTitle().trim())")
-    @Mapping(target = "postText", expression = "java(postDto.getPostText().trim())")
+    @Mapping(target = "title", expression = "java(dto.getTitle().trim())")
+    @Mapping(target = "postText", expression = "java(dto.getPostText().trim())")
     @Mapping(target = "tags", expression = "java(post.getTags())")
-    Post updateEntity(PostDto postDto, Post post);
+    Post updateEntity(PostDto dto, Post post);
 
     @Named("setTagsToSetString")
     default Set<String> convertSetTagsToSetString(Set<Tag> tags) {
