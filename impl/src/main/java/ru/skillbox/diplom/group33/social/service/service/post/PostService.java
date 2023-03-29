@@ -20,17 +20,22 @@ import ru.skillbox.diplom.group33.social.service.model.post.Post_;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group33.social.service.service.friend.FriendService;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
 import ru.skillbox.diplom.group33.social.service.service.storage.StorageService;
 
 import javax.persistence.criteria.Join;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.POST;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 
 
 @Slf4j
@@ -41,10 +46,10 @@ public class PostService {
     private final NotificationHandler notificationHandler;
     private final PostRepository repository;
     private final StorageService storageService;
-
     private final PostMapper mapper;
     private final TagService tagService;
     private final LikeService likeService;
+    private final FriendService friendService;
 
     public PostDto getById(Long id) {
         log.info("IN PostService getById - id: {}", id);
@@ -53,7 +58,14 @@ public class PostService {
 
     public Page<PostDto> getAll(PostSearchDto searchDto, Pageable page) {
         log.info("IN PostService getAll - searchDto: {}", searchDto);
+        List<Long> blockedIds = friendService.getFriendIdsWhoBlocked(getJwtUserIdFromSecurityContext());
+        searchDto.setAccountIds(searchDto.getAccountIds() == null ?
+                friendService.getFriendsIds(getJwtUserIdFromSecurityContext()) : searchDto.getAccountIds());
+        searchDto.setBlockedIds(blockedIds.size() == 0 ? null : blockedIds);
+        searchDto.setDateFrom(searchDto.getDateFrom() == null ? ZonedDateTime.now().
+                minusYears(10) : searchDto.getDateFrom());
         Page<Post> posts = repository.findAll(getSpecification(searchDto), page);
+
         return new PageImpl<>(posts.map(e -> {
             PostDto dto = mapper.convertToDto(e);
             dto.setMyLike(likeService.getMyLike(dto.getId(), LikeType.POST));
@@ -64,6 +76,19 @@ public class PostService {
     public PostDto create(PostDto dto) {
         log.info("IN PostService create - dto {}", dto);
         Post post = mapper.initEntity(dto);
+        post.setTags(tagService.create(post, dto.getTags()));
+        notificationHandler.sendNotificationReceivers(POST, post.getTitle());
+        return mapper.convertToDto(repository.save(post));
+    }
+
+    public PostDto createWithPublishDate(Long publishDate, PostDto dto) {
+        log.info("IN PostService createWithPublishDate - publishDate - {}, dto {}",publishDate, dto);
+
+        Instant instant = Instant.ofEpochSecond(publishDate);
+        ZonedDateTime time = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+        dto.setPublishDate(time);
+        Post post = mapper.initEntity(dto);
+
         post.setTags(tagService.create(post, dto.getTags()));
         notificationHandler.sendNotificationReceivers(POST, post.getTitle());
         return mapper.convertToDto(repository.save(post));
@@ -91,7 +116,7 @@ public class PostService {
                 .and(equal(Post_.title, searchDto.getTitle(), true))
                 .and(equal(Post_.postText, searchDto.getPostText(), true))
                 .and(containsTag(searchDto.getTags()))
-                .and(between(Post_.time, searchDto.getDateFrom(), searchDto.getDateTo() == null ? ZonedDateTime.now() : searchDto.getDateTo(), true));
+                .and(between(Post_.publishDate, searchDto.getDateFrom(), searchDto.getDateTo() == null ? ZonedDateTime.now() : searchDto.getDateTo(), true));
     }
 
     private static Specification<Post> containsTag(Set<String> tags) {

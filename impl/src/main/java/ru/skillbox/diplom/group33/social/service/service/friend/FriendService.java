@@ -302,7 +302,7 @@ public class FriendService {
         }
     }
 
-    private List<Long> getFriendsIds(Long id) {
+    public List<Long> getFriendsIds(Long id) {
         FriendSearchDto mySearchDto = new FriendSearchDto();
         mySearchDto.setToAccountId(id);
         mySearchDto.setStatusCode(StatusCode.FRIEND);

@@ -54,8 +54,8 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
     ResponseEntity<Page<PostDto>> getAll(PostSearchDto searchDto, Pageable page);
 
-    @Override
-    @PostMapping()
+
+    @PostMapping(params = "publishDate")
     @Operation(summary = "Создание поста")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное создание", content = @Content(mediaType = "")),
@@ -63,7 +63,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
-    ResponseEntity<PostDto> create(@RequestBody PostDto dto);
+    ResponseEntity<PostDto> create(@RequestParam Long publishDate, @RequestBody PostDto dto);
 
     @PutMapping("/{id}")
     @Operation(summary = "Обновление поста")
