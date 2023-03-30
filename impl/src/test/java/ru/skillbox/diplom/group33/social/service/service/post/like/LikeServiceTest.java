@@ -12,10 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.jdbc.Sql;
-import ru.skillbox.diplom.group33.social.service.DbConfig;
 import ru.skillbox.diplom.group33.social.service.config.security.JwtUser;
 import ru.skillbox.diplom.group33.social.service.dto.post.comment.CommentType;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeDto;
@@ -37,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 
-@ContextConfiguration(classes = {DbConfig.class})
 @ActiveProfiles("test")
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:db/TestData.sql")
 @ExtendWith(MockitoExtension.class)

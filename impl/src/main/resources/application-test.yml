@@ -1,13 +1,16 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/${POSTGRES_DB:postgres}
-    username: ${POSTGRES_USER:skillbox}
-    password: ${POSTGRES_PASSWORD:skillbox}
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   liquibase:
     enabled: true
-    drop-first: ${SWITCH_DROP_FIRST:false}
+    drop-first: true
     change-log: classpath:db/db-changelog-master.xml
     default-schema: public
 
@@ -21,7 +24,7 @@ spring:
         default_schema: public
 
   kafka:
-    bootstrap-servers: ${KAFKA_BROKER:api-kafka.javapro-team33:9092}
+    bootstrap-servers: localhost:6001
     consumer:
       group-id: skillbox
 
@@ -44,23 +47,9 @@ whitelist:
     - /**/registration
     - /**/v3/api-docs/**
     - /**/swagger-ui/**
-    - /**/storage
 
 cloudinary:
   cloud_name: dv7luy20w
   api_key: 658913949174425
   api_secret: L9cseajDW8sgMGRVl0-oLXTMPmE
   defaultPhoto: https://res.cloudinary.com/dv7luy20w/image/upload/v1678120930/avatar_v4ylx1.png
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui-custom.html
-
-mail:
-  host: smtp.yandex.ru
-  username: javapro.team33@yandex.ru
-  password: javapro.team33@gmail.com
-  port: 465
-  protocol: smtps
-  debug: true
-  url: ${HOST_RECOVERY:localhost:8097}

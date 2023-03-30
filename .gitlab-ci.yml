@@ -1,9 +1,18 @@
-image: maven:3-amazoncorretto-17
+image: maven:3.9-sapmachine-17
 
 stages:
   - build
   - deploy-docker
   - deploy-k8s
+
+services:
+  - postgres:12.2-alpine
+
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST_AUTH_METHOD: trust
 
 build:
   stage: build
