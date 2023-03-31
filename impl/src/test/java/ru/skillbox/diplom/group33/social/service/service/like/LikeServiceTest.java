@@ -27,6 +27,7 @@ import ru.skillbox.diplom.group33.social.service.model.post.like.Like;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.comment.CommentRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.like.LikeRepository;
+import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
 import java.time.ZonedDateTime;

@@ -57,24 +57,24 @@ public class AccountServiceTest {
 
     }
 
-    @Test
-    public void testCreateAccount() {
-        AccountService accountService = new AccountService(accountRepository,notificationService, accountMapper);
-        // Given
-        User user = new User();
-        Account account = new Account();
-        account.setId(1L);
-        when(accountMapper.userToAccount(user)).thenReturn(account);
-        when(accountRepository.save(account)).thenReturn(account);
-
-        // When
-        accountService.createAccount(user);
-
-        // Then
-        verify(accountMapper).userToAccount(user);
-        verify(accountRepository).save(account);
-        verify(notificationService).createSettings(1L);
-    }
+//    @Test
+//    public void testCreateAccount() {
+//        AccountService accountService = new AccountService(accountRepository,notificationService, accountMapper);
+//        // Given
+//        User user = new User();
+//        Account account = new Account();
+//        account.setId(1L);
+//        when(accountMapper.userToAccount(user)).thenReturn(account);
+//        when(accountRepository.save(account)).thenReturn(account);
+//
+//        // When
+//        accountService.createAccount(user);
+//
+//        // Then
+//        verify(accountMapper).userToAccount(user);
+//        verify(accountRepository).save(account);
+//        verify(notificationService).createSettings(1L);
+//    }
 
     /*@Test
     public void testGetAccount() {

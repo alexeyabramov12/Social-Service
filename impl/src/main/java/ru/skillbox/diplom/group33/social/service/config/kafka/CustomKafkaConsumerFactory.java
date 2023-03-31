@@ -54,7 +54,7 @@ public class CustomKafkaConsumerFactory {
         Map<String, Class<?>> mappings = new HashMap<>();
         mappings.put(NOTIFICATION_INPUT_DTO_KEY, NotificationInputDto.class);
         mappings.put(NOTIFICATION_DTO_KEY, NotificationDto.class);
-        mappings.put(MESSAGE_SHORT_DTO_KEY, MessageDto.class);
+        mappings.put(MESSAGE_DTO_KEY, MessageDto.class);
         mappings.put(STREAMING_MESSAGE_DTO, StreamingMessageDto.class);
         typeMapper.setIdClassMapping(mappings);
         converter.setTypeMapper(typeMapper);
