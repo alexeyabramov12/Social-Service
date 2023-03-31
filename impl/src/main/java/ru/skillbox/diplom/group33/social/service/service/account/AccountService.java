@@ -15,6 +15,7 @@ import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.account.Account_;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
+import ru.skillbox.diplom.group33.social.service.repository.friend.FriendRepository;
 import ru.skillbox.diplom.group33.social.service.service.notification.NotificationService;
 import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
 
@@ -36,7 +37,7 @@ public class AccountService {
     private final NotificationService notificationService;
     private final AccountMapper mapper;
     private final CloudinaryEndPoints cloudinaryEndPoints;
-
+    private final FriendRepository friendRepository;
 
 
     public void createAccount(User user) {
@@ -57,6 +58,7 @@ public class AccountService {
 
     public Page<AccountDto> search(AccountSearchDto accountSearchDto, Pageable page) {
         log.info("IN AccountService - search, accountSearchDto: " + accountSearchDto);
+
         if (accountSearchDto.getAuthor() == null) {
             return repository.findAll(getSpecificationByAllParameters(accountSearchDto), page).map(mapper::convertToDto);
         } else {
@@ -66,7 +68,12 @@ public class AccountService {
 
     public AccountDto getById(Long id) {
         log.info("IN AccountService - getById, id: " + id);
-        return mapper.convertToDto(repository.findById(id).orElseThrow(NullPointerException::new));
+        Account account = repository.findById(id).orElse(null);
+        if (account == null) {
+        account = repository.findById(friendRepository.findById(id)
+                .orElseThrow(NullPointerException::new).getFromAccountId()).orElseThrow(NullPointerException::new);
+        }
+        return mapper.convertToDto(account);
     }
 
     public AccountDto update(AccountDto accountDto) {

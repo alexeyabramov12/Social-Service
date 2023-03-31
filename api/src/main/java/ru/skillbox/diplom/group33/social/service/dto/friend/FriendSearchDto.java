@@ -42,6 +42,8 @@ public class FriendSearchDto extends BaseSearchDto {
         this.fromAccountId = fromAccountId;
         this.statusCode = statusCode;
         this.toAccountId = toAccountId;
+        setIsDeleted(false);
+
     }
 
     public FriendSearchDto(Long fromAccountId, Long toAccountId) {
@@ -54,13 +56,7 @@ public class FriendSearchDto extends BaseSearchDto {
         this.fromAccountId = fromAccountId;
         this.statusCode = statusCode;
         this.toAccountId = toAccountId;
-        super.setIsDeleted(isDeleted);
-    }
-
-    public FriendSearchDto(Long fromAccountId, Long toAccountId, boolean isDeleted) {
-        this.fromAccountId = fromAccountId;
-        this.toAccountId = toAccountId;
-        super.setIsDeleted(isDeleted);
+        setIsDeleted(isDeleted);
     }
 
     public FriendSearchDto(StatusCode statusCode) {
