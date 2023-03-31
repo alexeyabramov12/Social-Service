@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
@@ -20,6 +22,7 @@ import ru.skillbox.diplom.group33.social.service.dto.dialog.response.StatusMessa
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.UnreadCountRs;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.setStatusMessageDto.SetStatusMessageReadDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.unreadCountDto.UnreadCountDto;
+import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.DialogMapper;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.message.MessageMapper;
@@ -33,6 +36,7 @@ import ru.skillbox.diplom.group33.social.service.repository.dialog.DialogReposit
 import ru.skillbox.diplom.group33.social.service.repository.dialog.message.MessageRepository;
 import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,7 +127,14 @@ public class DialogService {
         return unreadCountRs;
     }
 
-    public MessageShortDto createMessage(MessageDto messageDto) {
+    @Async
+    @KafkaListener(topics = "${topic.names.message}")
+    public void listenMessage(MessageDto messageDto) {
+        log.info("In DialogService listenMessage: messageDto - {}", messageDto);
+        createMessage(messageDto);
+    }
+
+    private void createMessage(MessageDto messageDto) {
         Dialog dialog = getDialog(messageDto.getAuthorId(), messageDto.getRecipientId());
         messageDto.setTime(ZonedDateTime.now());
         messageDto.setDialogId(dialog.getId());
@@ -137,8 +148,8 @@ public class DialogService {
 
         dialog.setLastMessage(message);
         dialogRepository.save(dialog);
-        return messageMapper.convertEntityToShortDto(message);
     }
+
 
     private Dialog getDialog(Long authorId, Long companionId) {
         DialogSearchDto searchDto = new DialogSearchDto();

@@ -18,9 +18,9 @@ import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group33.social.service.model.post.Post;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
-import ru.skillbox.diplom.group33.social.service.service.PostService;
-import ru.skillbox.diplom.group33.social.service.service.like.LikeService;
-import ru.skillbox.diplom.group33.social.service.service.tag.TagService;
+import ru.skillbox.diplom.group33.social.service.service.post.PostService;
+import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
+import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
 
 import java.util.ArrayList;
 import java.util.HashSet;

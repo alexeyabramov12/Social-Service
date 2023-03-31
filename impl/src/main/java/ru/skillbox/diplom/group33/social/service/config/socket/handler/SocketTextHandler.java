@@ -77,23 +77,23 @@ public class SocketTextHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws JsonProcessingException {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload();
         JsonNode jsonNode = objectMapper.readTree(payload);
         if (jsonNode.get("type").textValue().equals("MESSAGE")) {
             StreamingMessageDto streamingMessageDto = objectMapper.readValue(payload, StreamingMessageDto.class);
 
             MessageDto messageDto = objectMapper.readValue(jsonNode.get("data").toString(), MessageDto.class);
-            MessageShortDto messageShortDto = dialogService.createMessage(messageDto);
 
-            streamingMessageDto.setData(objectMapper.convertValue(messageShortDto, HashMap.class));
-            sandMessage(streamingMessageDto);
+            streamingMessageDto.setData(objectMapper.convertValue(messageMapper.convertDtoToShortDto(messageDto), HashMap.class));
+            sandMessage(messageDto);
+
+           sendToSocketHandler(streamingMessageDto);
         }
     }
 
-    @KafkaListener(topics = "${topic.names.message}")
-    public void sendToSocketHandler(StreamingMessageDto<MessageShortDto> streamingMessageDto) throws IOException {
-        log.info("In SocketTextHandler sendToSocketHandler: received message - {}", streamingMessageDto);
+
+    private void sendToSocketHandler(StreamingMessageDto streamingMessageDto) throws IOException {
         if (streamingMessageDto != null && containsSession(streamingMessageDto.getAccountId())) {
             findSession(streamingMessageDto.getAccountId())
                     .sendMessage(new TextMessage(objectMapper.writeValueAsBytes(streamingMessageDto)));
@@ -102,8 +102,9 @@ public class SocketTextHandler extends TextWebSocketHandler {
         }
     }
 
-    private void sandMessage(StreamingMessageDto<MessageShortDto> streamingMessageDto) {
-        kafkaDialogTemplate.send(topic, streamingMessageDto);
+
+    private void sandMessage(MessageDto messageDto) {
+        kafkaDialogTemplate.send(topic, messageDto);
     }
 }
 

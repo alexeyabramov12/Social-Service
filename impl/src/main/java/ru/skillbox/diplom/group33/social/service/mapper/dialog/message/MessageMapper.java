@@ -19,11 +19,13 @@ public interface MessageMapper {
     @Mapping(target = "readStatus", expression = "java(ReadStatus.SEND)")
     Message convertToEntity(MessageDto dto);
 
-
     @Mapping(target = "time", expression = "java(message.getTime().toEpochSecond())")
     MessageShortDto convertEntityToShortDto(Message message);
 
     ReadStatus convertRedStatusDtoToReadStatus(ReadStatusDto dto);
+
+    @Mapping(target = "time", ignore = true)
+    MessageShortDto convertDtoToShortDto(MessageDto dto);
 
 
 
