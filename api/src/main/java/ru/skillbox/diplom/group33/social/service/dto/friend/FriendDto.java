@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseDto;
 
+import java.time.ZonedDateTime;
+
 @Getter
 @Setter
 @ToString
@@ -24,7 +26,7 @@ public class FriendDto extends BaseDto {
     @Schema(description = "Страна")
     private String country;
     @Schema(description = "День рождения")
-    private String birthDate;
+    private ZonedDateTime birthDate;
     @Schema(description = "В сети/Не в сети")
     private Boolean isOnline;
 }

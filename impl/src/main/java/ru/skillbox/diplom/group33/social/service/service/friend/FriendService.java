@@ -17,7 +17,9 @@ import ru.skillbox.diplom.group33.social.service.model.friend.Friend;
 import ru.skillbox.diplom.group33.social.service.model.friend.Friend_;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group33.social.service.repository.friend.FriendRepository;
+import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,7 @@ public class FriendService {
     }
 
     public Page<FriendDto> getAll(FriendSearchDto searchDto, Pageable page) {
-        log.info("FriendService: findAll");
+        log.info("FriendService: getAll");
 
         searchDto.setFromAccountId(getJwtUserIdFromSecurityContext());
         searchDto.setIsDeleted(false);
@@ -76,22 +78,33 @@ public class FriendService {
     }
 
     public Long getCount() {
-        FriendSearchDto friend = new FriendSearchDto(StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext());
-        friend.setIsDeleted(false);
         return (long) friendRepository
-                .findAll(getSpecification(friend)).size();
+                .findAll(getSpecification(new FriendSearchDto
+                        (StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext())))
+                .size();
 
     }
 
     public void delete(Long id) {
         log.info("FriendService: delete by id {}", id);
-        List<Friend> friendList = friendRepository
-                .findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), id)));
-        friendList.addAll(friendRepository
-                .findAll(getSpecification(new FriendSearchDto(id, getJwtUserIdFromSecurityContext()))));
-
-        if (!friendList.isEmpty()) {
-            friendRepository.deleteAll(friendList);
+        List<Friend> invoices = getCurrentInvoicesByAccountId(id);
+        for (Friend friend : invoices) {
+            if (friend.getStatusCode() == StatusCode.FRIEND) {
+                if (friend.getToAccountId().equals(id)) {
+                    friend.setStatusCode(StatusCode.SUBSCRIBED);
+                } else {
+                    friend.setStatusCode(StatusCode.NONE);
+                }
+                friend.setPreviousStatusCode(StatusCode.FRIEND);
+                friendRepository.save(friend);
+            } else if (friend.getStatusCode() == StatusCode.REQUEST_FROM) {
+                friend.setStatusCode(StatusCode.REJECTING);
+                friend.setPreviousStatusCode(StatusCode.REQUEST_FROM);
+                friendRepository.save(friend);
+            } else {
+                friend.setPreviousStatusCode(friend.getStatusCode());
+                friendRepository.delete(friend);
+            }
         }
     }
 
@@ -99,28 +112,37 @@ public class FriendService {
         log.info("FriendService: getRecommendations");
         createRecommendations();
 
-        FriendSearchDto friendSearchDto = new FriendSearchDto();
-        friendSearchDto.setToAccountId(getJwtUserIdFromSecurityContext());
-        friendSearchDto.setStatusCode(StatusCode.RECOMMENDATION);
-        friendSearchDto.setIsDeleted(false);
-
         return friendRepository.
-                findAll(getSpecification(friendSearchDto))
+                findAll(getSpecification(new FriendSearchDto
+                        (StatusCode.RECOMMENDATION, getJwtUserIdFromSecurityContext())))
                 .stream().map(friendMapper::convertToDto).collect(Collectors.toList());
     }
 
     public void blockFriend(Long id) {
         log.info("FriendService: block by id {}", id);
 
-        List<Friend> blocked = getBlockedFriends(id);
         List<Friend> invoices = getCurrentInvoicesByAccountId(id);
-        if (blocked.isEmpty()) {
-            friendRepository.save(new Friend(getJwtUserIdFromSecurityContext(), StatusCode.BLOCKED, id));
-            friendRepository.deleteAll(invoices);
+        List<Friend> blocked = getBlockedFriends(id);
+        Friend friend = new Friend();
+        if (invoices.isEmpty()) {
+            friend = friendMapper.accountToFriend(accountRepository
+                    .findById(id).orElse(null));
+            friendRepository.save(friendMapper.friendToBlockedFriend(friend));
         } else {
-            friendRepository.deleteAll(blocked);
+            friend = friendRepository
+                    .findAll(getSpecification(new FriendSearchDto(SecurityUtils.getJwtUserIdFromSecurityContext(), id)))
+                    .get(0);
+            if (blocked.isEmpty()) {
+                friendRepository.deleteAll(invoices);
+                friend.setStatusCode(StatusCode.BLOCKED);
+                friend.setIsDeleted(false);
+                friendRepository.save(friend);
+            } else {
+                friendRepository.deleteAll(blocked);
+            }
         }
     }
+
     private List<Friend> getBlockedFriends(Long id) {
         return friendRepository
                 .findAll(getSpecification(
@@ -129,34 +151,23 @@ public class FriendService {
 
     public List<FriendDto> approveFriend(Long id) {
         log.info("FriendService: approve by id {}", id);
-        List<Friend> friendToApprove = getCurrentInvoicesByAccountId(id);
-
-        if (friendToApprove.isEmpty()) {
-            return createApproves(id);
-        }
-
-        for (Friend friend : friendToApprove)
-            if (friend.getStatusCode() == StatusCode.REQUEST_TO
-                    || friend.getStatusCode() == StatusCode.REQUEST_FROM
-                    || friend.getStatusCode() == StatusCode.RECOMMENDATION) {
-                friendRepository.delete(friend);
-            }
-
         return createApproves(id);
     }
 
     private List<FriendDto> createApproves(Long id) {
-        Long myId = getJwtUserIdFromSecurityContext();
+        List<Friend> invoices = getCurrentInvoicesByAccountId(id);
 
-        List<Friend> listFriend = new ArrayList<>();
-        if (alreadyFriends(id).isEmpty()) {
-            listFriend.add(new Friend(myId, StatusCode.FRIEND, id, StatusCode.REQUEST_FROM));
-            listFriend.add(new Friend(id, StatusCode.FRIEND, myId, StatusCode.REQUEST_TO));
-            friendRepository.saveAll(listFriend);
-            return friendMapper.convertToDtoList(listFriend);
+        List<Friend> approved = new ArrayList<>();
+        for (Friend friend : invoices) {
+            if (friend.getStatusCode() == StatusCode.REQUEST_TO || friend.getStatusCode() == StatusCode.REQUEST_FROM) {
+                approved.add(friendMapper.friendToApprovedFriend(friend));
+            } else {
+                friend.setIsDeleted(true);
+                approved.add(friend);
+            }
         }
-
-        return friendMapper.convertToDtoList(alreadyFriends(id));
+        friendRepository.saveAll(approved);
+        return friendMapper.convertToDtoList(approved);
     }
 
 
@@ -168,25 +179,21 @@ public class FriendService {
             Friend friend1 = friendRepository
                     .findAll(getSpecification(new FriendSearchDto(friend.getToAccountId(), StatusCode.RECOMMENDATION,
                             friend.getFromAccountId()))).get(0);
-            List<Friend> listFriend = new ArrayList<>();
-            listFriend.add(new Friend(friend.getFromAccountId(), StatusCode.REQUEST_FROM, friend.getToAccountId()));
-            listFriend.add(new Friend(friend.getToAccountId(), StatusCode.REQUEST_TO, friend.getFromAccountId()));
+            friend.setStatusCode(StatusCode.REQUEST_FROM);
+            friend.setIsDeleted(false);
+            friend1.setStatusCode(StatusCode.REQUEST_TO);
 
-            friendRepository.deleteAll(friendRepository
-                    .findAll(getSpecification(new FriendSearchDto(friend.getFromAccountId(), friend.getToAccountId()))));
-            friendRepository.deleteAll(friendRepository
-                    .findAll(getSpecification(new FriendSearchDto(friend.getToAccountId(), friend.getFromAccountId()))));
-            friendRepository.delete(friend);
-            friendRepository.delete(friend1);
+            List<Friend> listFriend = new ArrayList<>();
+            listFriend.add(friend);
+            listFriend.add(friend1);
+
             friendRepository.saveAll(listFriend);
 
             return friendMapper.convertToDtoList(listFriend);
         }
-        List<Friend> friendList = getCurrentInvoicesByAccountId(id);
-        if (friendList.isEmpty()) {
-            return createInvoices(id);
-        }
-        return friendMapper.convertToDtoList(friendList);
+
+
+        return createInvoices(id);
     }
 
     private List<Friend> getCurrentInvoicesByAccountId(Long id) {
@@ -194,48 +201,55 @@ public class FriendService {
         list.addAll(listFriendsToApprove(id));
         return list;
     }
+
     private List<FriendDto> createInvoices(Long id) {
         Long myId = getJwtUserIdFromSecurityContext();
 
-        if (alreadySendRequests(id).isEmpty()) {
-            List<Friend> listFriend = new ArrayList<>();
-            listFriend.add(new Friend(myId, StatusCode.REQUEST_TO, id));
-            listFriend.add(new Friend(id, StatusCode.REQUEST_FROM, myId));
-            friendRepository.saveAll(listFriend);
+        Friend friend = friendMapper.accountToFriendRequestTo(accountRepository.findById(myId).orElse(null));
+        friend.setFromAccountId(id);
+        Friend friend1 = friendMapper.accountToFriendRequestFrom(accountRepository.findById(id).orElse(null));
 
-            return friendMapper.convertToDtoList(listFriend);
-        }
-        return friendMapper.convertToDtoList(alreadySendRequests(id));
+        List<Friend> listFriend = new ArrayList<>();
+
+        listFriend.add(friend);
+        listFriend.add(friend1);
+        friendRepository.saveAll(listFriend);
+        return friendMapper.convertToDtoList(listFriend);
     }
 
     private List<Friend> alreadySendRequests(Long id) {
-        List<Friend> listFriend = friendRepository.findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_TO, id, false)));
-        listFriend.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext(), false))));
-        listFriend.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_FROM, id, false))));
-        listFriend.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.REQUEST_FROM, getJwtUserIdFromSecurityContext(), false))));
-        return listFriend;
+
+        List<Friend> listFriend = friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_TO, id, false)));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (id, StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext(), false))));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_FROM, id, false))));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (id, StatusCode.REQUEST_FROM, getJwtUserIdFromSecurityContext(), false))));
+        return listFriend.stream().distinct().collect(Collectors.toList());
     }
 
     private List<Friend> alreadyFriends(Long id) {
-        List<Friend> listFriend = friendRepository.findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), StatusCode.FRIEND, id, false)));
-        listFriend.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.FRIEND, getJwtUserIdFromSecurityContext(), false))));
-        return listFriend;
+        List<Friend> listFriend = friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.FRIEND, id, false)));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (id, StatusCode.FRIEND, getJwtUserIdFromSecurityContext(), false))));
+        return listFriend.stream().distinct().collect(Collectors.toList());
     }
 
     private List<Friend> listFriendsToAdd(Long id) {
-        FriendSearchDto dto = new FriendSearchDto();
-        dto.setFromAccountId(getJwtUserIdFromSecurityContext());
-        dto.setToAccountId(id);
-        dto.setIsDeleted(false);
-        return friendRepository.findAll(getSpecification(dto));
+        return friendRepository.findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), id)));
     }
 
     private List<Friend> listFriendsToApprove(Long id) {
-        FriendSearchDto dto = new FriendSearchDto();
-        dto.setToAccountId(getJwtUserIdFromSecurityContext());
-        dto.setFromAccountId(id);
-        dto.setIsDeleted(false);
-        return friendRepository.findAll(getSpecification(dto));
+        return friendRepository.findAll(getSpecification(new FriendSearchDto(id, getJwtUserIdFromSecurityContext())));
     }
 
     private void createRecommendations() {
@@ -251,7 +265,6 @@ public class FriendService {
             exceptIds.addAll(getFriendIdsWhoBlockedMe(id));
             exceptIds.addAll(getRequestTo(id));
             exceptIds.addAll(getRequestFrom(id));
-            //??
             exceptIds.addAll(alreadyFriends(id).stream().map(Friend::getToAccountId).collect(Collectors.toList()));
             exceptIds.addAll(alreadyFriends(id).stream().map(Friend::getFromAccountId).collect(Collectors.toList()));
             exceptIds.add(id);
@@ -286,10 +299,12 @@ public class FriendService {
             for (Long entry : resultList) {
                 count++;
 
-                friendRepository.deleteAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.RECOMMENDATION, entry))));
+                friendRepository.deleteAll(friendRepository
+                        .findAll(getSpecification(new FriendSearchDto(id, StatusCode.RECOMMENDATION, entry))));
 
                 Friend friend = friendMapper.friendToFriendTo(accountMapper
-                        .convertToDto(accountRepository.findById(id).orElseThrow(EntityNotFoundResponseStatusException::new)));
+                        .convertToDto(accountRepository.findById(id)
+                                .orElseThrow(EntityNotFoundResponseStatusException::new)));
 
                 friend.setStatusCode(StatusCode.RECOMMENDATION);
                 friend.setPreviousStatusCode(StatusCode.NONE);
@@ -303,32 +318,20 @@ public class FriendService {
     }
 
     public List<Long> getFriendsIds(Long id) {
-        FriendSearchDto mySearchDto = new FriendSearchDto();
-        mySearchDto.setToAccountId(id);
-        mySearchDto.setStatusCode(StatusCode.FRIEND);
-        mySearchDto.setIsDeleted(false);
-        return friendRepository.findAll(getSpecification(mySearchDto))
+        return friendRepository.findAll(getSpecification(new FriendSearchDto(StatusCode.FRIEND, id)))
                 .stream()
                 .map(Friend::getFromAccountId).collect(Collectors.toList());
     }
 
-    private List<Long> getFriendIdsWhoBlockedMe(Long id) {
-        FriendSearchDto searchDto = new FriendSearchDto();
-        searchDto.setToAccountId(id);
-        searchDto.setStatusCode(StatusCode.BLOCKED);
-        searchDto.setIsDeleted(false);
-        return friendRepository.findAll(getSpecification(searchDto))
+    public List<Long> getFriendIdsWhoBlockedMe(Long id) {
+        return friendRepository.findAll(getSpecification(new FriendSearchDto(StatusCode.BLOCKED, id)))
                 .stream()
                 .map(Friend::getFromAccountId)
                 .collect(Collectors.toList());
     }
 
     public List<Long> getFriendIdsWhoBlocked(Long id) {
-        FriendSearchDto searchDto = new FriendSearchDto();
-        searchDto.setFromAccountId(id);
-        searchDto.setStatusCode(StatusCode.BLOCKED);
-        searchDto.setIsDeleted(false);
-        return friendRepository.findAll(getSpecification(searchDto))
+        return friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.BLOCKED)))
                 .stream()
                 .map(Friend::getToAccountId)
                 .collect(Collectors.toList());
@@ -340,11 +343,11 @@ public class FriendService {
                 .map(Friend::getToAccountId)
                 .collect(Collectors.toList());
 
-        ids.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(StatusCode.REQUEST_TO,id)))
+        ids.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(StatusCode.REQUEST_TO, id)))
                 .stream()
                 .map(Friend::getFromAccountId)
                 .collect(Collectors.toList()));
-        return ids;
+        return ids.stream().distinct().collect(Collectors.toList());
     }
 
     private List<Long> getRequestFrom(Long id) {
@@ -353,11 +356,11 @@ public class FriendService {
                 .map(Friend::getFromAccountId)
                 .collect(Collectors.toList());
 
-        ids.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id,StatusCode.REQUEST_FROM)))
+        ids.addAll(friendRepository.findAll(getSpecification(new FriendSearchDto(id, StatusCode.REQUEST_FROM)))
                 .stream()
                 .map(Friend::getToAccountId)
                 .collect(Collectors.toList()));
-        return ids;
+        return ids.stream().distinct().collect(Collectors.toList());
     }
 
     private Specification<Friend> getSpecification(FriendSearchDto friendSearchDto) {
@@ -365,6 +368,13 @@ public class FriendService {
                 .and(equal(Friend_.statusCode, friendSearchDto.getStatusCode(), true))
                 .and(equal(Friend_.toAccountId, friendSearchDto.getToAccountId(), true))
                 .and(equal(Friend_.fromAccountId, friendSearchDto.getFromAccountId(), true))
+                .and(equal(Friend_.firstName, friendSearchDto.getFirstName(), true))
+                .and(equal(Friend_.city, friendSearchDto.getCity(), true))
+                .and(equal(Friend_.country, friendSearchDto.getCountry(), true))
+                .and(between(Friend_.birthDay,
+                        friendSearchDto.getAgeTo() == null ? null : ZonedDateTime.now().minusYears(friendSearchDto.getAgeTo()),
+                        friendSearchDto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(friendSearchDto.getAgeFrom()),
+                        true))
                 .and(in(Friend_.id, friendSearchDto.getIds(), true));
     }
 }
