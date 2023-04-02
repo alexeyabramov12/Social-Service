@@ -24,7 +24,7 @@ public class PostSearchDto extends BaseSearchDto {
    private String postText;
    private Boolean withFriends;
    private Set<String> tags;
-   private ZonedDateTime dateFrom;
-   private ZonedDateTime dateTo;
+   private Long dateFrom;
+   private Long dateTo;
 
 }

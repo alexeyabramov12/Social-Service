@@ -108,8 +108,8 @@ public class AccountService {
                 .and(notIn(Account_.email, Collections.singletonList(getJwtUsers().getEmail()), true))
                 .and(likeLowerCase(Account_.firstName, searchDto.getFirstName(), true))
                 .and(likeLowerCase(Account_.lastName, searchDto.getLastName(), true))
-                .and(likeLowerCase(Account_.country, searchDto.getCountry(), true))
-                .and(likeLowerCase(Account_.city, searchDto.getCity(), true))
+                .and(equal(Account_.country, searchDto.getCountry(), true))
+                .and(equal(Account_.city, searchDto.getCity(), true))
                 .and(between(Account_.birthDate,
                         searchDto.getAgeTo() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeTo()),
                         searchDto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(searchDto.getAgeFrom()), true));

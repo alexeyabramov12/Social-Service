@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeType;
@@ -20,6 +22,7 @@ import ru.skillbox.diplom.group33.social.service.model.post.Post_;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag_;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
 import ru.skillbox.diplom.group33.social.service.service.friend.FriendService;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
@@ -30,6 +33,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,21 +54,50 @@ public class PostService {
     private final TagService tagService;
     private final LikeService likeService;
     private final FriendService friendService;
+    private final AccountService accountService;
 
     public PostDto getById(Long id) {
         log.info("IN PostService getById - id: {}", id);
         return mapper.convertToDto(repository.findById(id).orElseThrow(EntityNotFoundResponseStatusException::new));
     }
 
-    public Page<PostDto> getAll(PostSearchDto searchDto, Pageable page) {
-        log.info("IN PostService getAll - searchDto: {}", searchDto);
+    public Page<PostDto> getAll(PostSearchDto postSearchDto, Pageable page) {
+        log.info("IN PostService getAll - postSearchDto: {}", postSearchDto);
+
         List<Long> blockedIds = friendService.getFriendIdsWhoBlocked(getJwtUserIdFromSecurityContext());
-        searchDto.setAccountIds(searchDto.getAccountIds() == null ?
-                friendService.getFriendsIds(getJwtUserIdFromSecurityContext()) : searchDto.getAccountIds());
-        searchDto.setBlockedIds(blockedIds.size() == 0 ? null : blockedIds);
-        searchDto.setDateFrom(searchDto.getDateFrom() == null ? ZonedDateTime.now().
-                minusYears(10) : searchDto.getDateFrom());
-        Page<Post> posts = repository.findAll(getSpecification(searchDto), page);
+
+        if (postSearchDto.getAuthor() != null) {
+            AccountSearchDto accountSearchDto = new AccountSearchDto();
+            String author = postSearchDto.getAuthor().trim();
+            String[] arrayString = author.split(" ");
+            if (arrayString.length == 1) {
+                accountSearchDto.setFirstName(author);
+                log.info("IN PostService getAll - search with first name - {}", author);
+            } else if (arrayString.length == 2) {
+                accountSearchDto.setFirstName(arrayString[0]);
+                accountSearchDto.setLastName(arrayString[1]);
+                log.info("IN PostService getAll - search with first name - {} and last name - {}", arrayString[0], arrayString[1]);
+            } else return Page.empty(page);
+
+            List<AccountDto> accountList = accountService.search(accountSearchDto, page).toList();
+            List<Long> accountFriendIds = friendService.getFriendsIds(getJwtUserIdFromSecurityContext());
+
+            List<Long> accountIds = new ArrayList<>();
+            accountList.forEach(a -> {
+                if (accountFriendIds.contains(a.getId())) {
+                    accountIds.add(a.getId());
+                }
+            });
+
+            postSearchDto.setAccountIds(accountIds);
+        }
+
+        postSearchDto.setAccountIds(postSearchDto.getAccountIds() == null ?
+                friendService.getFriendsIds(getJwtUserIdFromSecurityContext()) : postSearchDto.getAccountIds());
+        postSearchDto.setBlockedIds(blockedIds.size() == 0 ? null : blockedIds);
+        postSearchDto.setDateFrom(postSearchDto.getDateFrom() == null ? ZonedDateTime.now().
+                minusYears(10).toEpochSecond() : postSearchDto.getDateFrom());
+        Page<Post> posts = repository.findAll(getSpecification(postSearchDto), page);
 
         return new PageImpl<>(posts.map(e -> {
             PostDto dto = mapper.convertToDto(e);
@@ -82,11 +115,9 @@ public class PostService {
     }
 
     public PostDto createWithPublishDate(Long publishDate, PostDto dto) {
-        log.info("IN PostService createWithPublishDate - publishDate - {}, dto {}",publishDate, dto);
+        log.info("IN PostService createWithPublishDate - publishDate - {}, dto {}", publishDate, dto);
 
-        Instant instant = Instant.ofEpochSecond(publishDate);
-        ZonedDateTime time = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
-        dto.setPublishDate(time);
+        dto.setPublishDate(ZonedDateTime.ofInstant(Instant.ofEpochSecond(publishDate), ZoneId.systemDefault()));
         Post post = mapper.initEntity(dto);
 
         post.setTags(tagService.create(post, dto.getTags()));
@@ -111,12 +142,16 @@ public class PostService {
         return getBaseSpecification(searchDto)
                 .and(equal(Post_.isDeleted, false, true))
                 .and(in(Post_.id, searchDto.getIds(), true))
-                .and(in(Post_.authorId, searchDto.getAccountIds(), true))
+                .and(in(Post_.authorId, searchDto.getAccountIds(), false))
                 .and(notIn(Post_.authorId, searchDto.getBlockedIds(), true))
-                .and(equal(Post_.title, searchDto.getTitle(), true))
-                .and(equal(Post_.postText, searchDto.getPostText(), true))
+                .and(likeLowerCase(Post_.title, searchDto.getTitle(), true))
+                .and(likeLowerCase(Post_.postText, searchDto.getPostText(), true))
                 .and(containsTag(searchDto.getTags()))
-                .and(between(Post_.publishDate, searchDto.getDateFrom(), searchDto.getDateTo() == null ? ZonedDateTime.now() : searchDto.getDateTo(), true));
+                .and(between(Post_.publishDate,
+                        ZonedDateTime.ofInstant(Instant.ofEpochSecond(searchDto.getDateFrom()), ZoneId.systemDefault()),
+                        searchDto.getDateTo() == null ?
+                                ZonedDateTime.now() :
+                                ZonedDateTime.ofInstant(Instant.ofEpochSecond(searchDto.getDateTo()), ZoneId.systemDefault()), true));
     }
 
     private static Specification<Post> containsTag(Set<String> tags) {
