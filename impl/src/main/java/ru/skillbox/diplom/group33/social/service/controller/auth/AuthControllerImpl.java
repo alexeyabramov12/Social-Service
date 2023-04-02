@@ -11,8 +11,11 @@ import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.NewPasswordDto;
+import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.PasswordRecoveryDto;
 import ru.skillbox.diplom.group33.social.service.service.auth.AuthService;
 import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;
+import ru.skillbox.diplom.group33.social.service.service.passwordRecovery.PasswordRecoveryService;
 
 
 @RestController
@@ -23,6 +26,7 @@ public class AuthControllerImpl implements AuthController {
     private final AuthService authService;
 
     private final CaptchaService captchaService;
+    private final PasswordRecoveryService passwordRecoveryService;
 
     @Override
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody AuthenticateDto authenticateDto) {
@@ -46,6 +50,22 @@ public class AuthControllerImpl implements AuthController {
     public ResponseEntity<CaptchaDto> captcha() {
         log.info("In AuthControllerImpl captcha");
         return ResponseEntity.status(HttpStatus.OK).body(captchaService.getCaptcha());
+    }
+
+    @Override
+    public ResponseEntity<RegistrationDto> changeEmail(RegistrationDto registrationDto) {
+        return null;
+    }
+
+    @Override
+    public void changePassword(PasswordRecoveryDto passwordRecoveryDto) {
+        passwordRecoveryService.getPasswordRecoveryMail(passwordRecoveryDto);
+    }
+
+    @Override
+    public void setPassword(String linkId, NewPasswordDto newPasswordDto) {
+
+        passwordRecoveryService.setPassword(linkId, newPasswordDto);
     }
 
 

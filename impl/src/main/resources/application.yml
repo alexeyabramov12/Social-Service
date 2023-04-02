@@ -54,3 +54,12 @@ cloudinary:
 springdoc:
   swagger-ui:
     path: /swagger-ui-custom.html
+
+mail:
+  host: smtp.yandex.ru
+  username: javapro.team33@yandex.ru
+  password: javapro.team33@gmail.com
+  port: 465
+  protocol: smtps
+  debug: true
+  url: ${HOST_RECOVERY:localhost:8097}
