@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.changeEmail.ChangeEmailDto;
 import ru.skillbox.diplom.group33.social.service.model.captcha.Captcha;
 import ru.skillbox.diplom.group33.social.service.repository.captcha.CaptchaRepository;
 
@@ -59,6 +60,13 @@ public class CaptchaService {
         boolean passCaptcha = captchaOrigin.getCode().equals(registrationDto.getCode());
         log.info("In CaptchaService passCaptcha: {}", passCaptcha);
         return passCaptcha;
+    }
+    public boolean passCaptcha(ChangeEmailDto changeEmailDto){
+        Captcha captchaOrigin = captchaRepository.getById(UUID.fromString(changeEmailDto.getTemp()));
+        boolean passCaptcha = captchaOrigin.getCode().equals(changeEmailDto.getCode());
+        log.info("In CaptchaService passCaptcha: {}", passCaptcha);
+        return passCaptcha;
+
     }
 
 }
