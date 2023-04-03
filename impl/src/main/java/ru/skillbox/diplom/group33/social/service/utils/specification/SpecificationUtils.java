@@ -77,7 +77,7 @@ public class SpecificationUtils<T> {
         return nullValueCheck(value, isSkipNullValues, () -> {
             return ((root, query, builder) -> {
                 query.distinct(true);
-                return builder.like(root.get(field), "%" + value.toLowerCase() + "%");
+                return builder.like(builder.lower(root.get(field)), "%" + value.toLowerCase() + "%");
             });
         });
     }

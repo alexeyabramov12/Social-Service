@@ -73,7 +73,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
         @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
         @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
         @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
-    ResponseEntity<PostDto> update(@RequestBody Long id, PostDto dto);
+    ResponseEntity<PostDto> update(@PathVariable Long id ,@RequestBody PostDto dto);
 
     @Override
     @DeleteMapping(value = "{id}")

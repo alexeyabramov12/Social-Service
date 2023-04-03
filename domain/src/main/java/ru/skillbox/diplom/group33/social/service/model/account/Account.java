@@ -53,4 +53,6 @@ public class Account extends User {
     private ZonedDateTime createOn;
     @Column(name = "update_on", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime updateOn;
+    @Column(name = "time", columnDefinition = "timestamp with time zone")
+    private ZonedDateTime time;
 }
