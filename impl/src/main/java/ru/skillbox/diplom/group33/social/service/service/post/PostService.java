@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Set;
 
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.POST;
-import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
+import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
 
 @Slf4j

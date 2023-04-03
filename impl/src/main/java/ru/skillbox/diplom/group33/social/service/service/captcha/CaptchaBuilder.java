@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class CaptchaBuilder {
 
-    private BufferedImage image;
-    private Graphics2D graphics;
+    public BufferedImage image;
+    public Graphics2D graphics;
     private String captchaString;
 
 
@@ -48,7 +48,7 @@ public class CaptchaBuilder {
     }
 
 
-    private String createCaptchaString(int length) {
+    public String createCaptchaString(int length) {
         Random random = new Random();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
@@ -58,9 +58,10 @@ public class CaptchaBuilder {
         return builder.toString();
     }
 
-    private int[] randomLine() {
+    public int[] randomLine() {
         Random random = new Random();
         int[] randomLine = new int[4];
+        int test = random.nextInt(image.getWidth());
         randomLine[0] = random.nextInt(image.getWidth());
         randomLine[1] = random.nextInt(image.getHeight());
         randomLine[2] = random.nextInt(image.getWidth());

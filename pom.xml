@@ -34,7 +34,6 @@
         <cloudinary.version>1.31.0</cloudinary.version>
 
         <jpamodelgen.version>6.1.6.Final</jpamodelgen.version>
-        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
@@ -180,7 +179,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
@@ -222,6 +220,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -242,7 +241,6 @@
             </plugin>
         </plugins>
     </build>
-
 
     <modules>
         <module>api</module>

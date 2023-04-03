@@ -1,11 +1,13 @@
 package ru.skillbox.diplom.group33.social.service.model.post.tag;
 
 import lombok.*;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 import ru.skillbox.diplom.group33.social.service.model.post.Post;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
@@ -22,4 +24,7 @@ public class Tag extends BaseEntity {
     @ManyToMany(mappedBy = "tags")
     private Set<Post> posts;
 
+    public Tag(String tag1) {
+
+    }
 }

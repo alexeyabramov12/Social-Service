@@ -18,7 +18,7 @@ public interface GeoMapper {
 
     List<CountryDto> converToCountryDtoList(List<Country> countriesList);
 
-    List<Country> converToCountryList(List<CountryDto> countriesListDto);
+//    List<Country> converToCountryList(List<CountryDto> countriesListDto);
 
     CityDto converToCityDto(City city);
 
@@ -26,6 +26,6 @@ public interface GeoMapper {
 
     List<CityDto> converToCityDtoList(List<City> cityList);
 
-    List<City> converToCityList(List<CityDto> cityListDto);
+//    List<City> converToCityList(List<CityDto> cityListDto);
 
 }

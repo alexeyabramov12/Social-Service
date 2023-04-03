@@ -1,15 +1,13 @@
 package ru.skillbox.diplom.group33.social.service.dto.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.skillbox.diplom.group33.social.service.dto.auth.UserDto;
 
 import java.time.ZonedDateTime;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDto extends UserDto {

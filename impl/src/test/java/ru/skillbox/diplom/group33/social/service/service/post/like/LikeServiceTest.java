@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group33.social.service.service.like;
+package ru.skillbox.diplom.group33.social.service.service.post.like;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ import ru.skillbox.diplom.group33.social.service.model.post.like.Like;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.comment.CommentRepository;
 import ru.skillbox.diplom.group33.social.service.repository.post.like.LikeRepository;
-import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
 import java.time.ZonedDateTime;
@@ -182,7 +181,6 @@ class LikeServiceTest {
         expectedLikeDto.setAuthorId(like.getAuthorId());
         expectedLikeDto.setTime(like.getTime());
         likeService.changeCommentLike(like.getItemId(), like.getType());
-
 
 
         LikeDto actualLikeDto = new LikeDto();
