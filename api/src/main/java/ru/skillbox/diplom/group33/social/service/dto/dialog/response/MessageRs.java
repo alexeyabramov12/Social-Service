@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.skillbox.diplom.group33.social.service.dto.dialog.DialogDto;
-import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.messageShortDto.MessageShortDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.base.BaseResponse;
 

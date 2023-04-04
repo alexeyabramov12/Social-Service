@@ -1,6 +1,5 @@
 package ru.skillbox.diplom.group33.social.service.config.socket.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -19,7 +17,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import ru.skillbox.diplom.group33.social.service.config.security.JwtTokenProvider;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
-import ru.skillbox.diplom.group33.social.service.dto.dialog.messageShortDto.MessageShortDto;
 import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.message.MessageMapper;
 import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
@@ -85,10 +82,12 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
             MessageDto messageDto = objectMapper.readValue(jsonNode.get("data").toString(), MessageDto.class);
 
+            log.info("In SocketTextHandler handleMessage: messageDto - {}", messageDto);
+
             streamingMessageDto.setData(objectMapper.convertValue(messageMapper.convertDtoToShortDto(messageDto), HashMap.class));
             sandMessage(messageDto);
 
-           sendToSocketHandler(streamingMessageDto);
+            sendToSocketHandler(streamingMessageDto);
         }
     }
 

@@ -15,14 +15,12 @@ import ru.skillbox.diplom.group33.social.service.dto.dialog.DialogSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.ReadStatusDto;
-import ru.skillbox.diplom.group33.social.service.dto.dialog.messageShortDto.MessageShortDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.DialogsRs;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.MessageRs;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.StatusMessageReadRs;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.response.UnreadCountRs;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.setStatusMessageDto.SetStatusMessageReadDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.unreadCountDto.UnreadCountDto;
-import ru.skillbox.diplom.group33.social.service.dto.streaming.StreamingMessageDto;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.DialogMapper;
 import ru.skillbox.diplom.group33.social.service.mapper.dialog.message.MessageMapper;
@@ -36,7 +34,6 @@ import ru.skillbox.diplom.group33.social.service.repository.dialog.DialogReposit
 import ru.skillbox.diplom.group33.social.service.repository.dialog.message.MessageRepository;
 import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
 
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,9 +90,9 @@ public class DialogService {
         Map<Long, AccountDto> accountDtoMap = new HashMap<>();
         accountList.forEach(account -> accountDtoMap.put(account.getId(), accountMapper.convertToDto(account)));
 
-        log.info("In DialogService getDialogs: get all dialogs for a user - {}", userId);
+        log.info("In DialogService getAllDialogs: get all dialogs for a user - {}", userId);
         List<DialogDto> listDialogDto = getListDialogDto(dialogList, accountDtoMap);
-        return dialogMapper.initDialogRs("", "",ZonedDateTime.now().toEpochSecond(), listDialogDto, offset, itemPerPage);
+        return dialogMapper.initDialogRs("", "", ZonedDateTime.now().toEpochSecond(), listDialogDto, offset, itemPerPage);
     }
 
     public MessageRs getAllMessages(Long companionId, Integer offset, Integer itemPerPage) {
@@ -109,7 +106,7 @@ public class DialogService {
                 Sort.by(Sort.Direction.DESC, "time")));
 
         response.setData(messageList.stream().map(messageMapper::convertEntityToShortDto).collect(Collectors.toList()));
-        log.info("In DialogService getAllMessages: companionId - {}", companionId);
+        log.info("In DialogService getAllMessages: get all messages with companionId - {}", companionId);
         return response;
     }
 
@@ -136,7 +133,6 @@ public class DialogService {
 
     private void createMessage(MessageDto messageDto) {
         Dialog dialog = getDialog(messageDto.getAuthorId(), messageDto.getRecipientId());
-        messageDto.setTime(ZonedDateTime.now());
         messageDto.setDialogId(dialog.getId());
         messageDto.setReadStates(ReadStatusDto.SEND);
         messageDto.setIsDeleted(false);

@@ -1,14 +1,14 @@
 package ru.skillbox.diplom.group33.social.service.dto.dialog;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group33.social.service.dto.base.BaseDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Дто диалога")

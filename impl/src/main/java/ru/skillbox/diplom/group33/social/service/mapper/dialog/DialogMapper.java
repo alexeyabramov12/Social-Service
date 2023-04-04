@@ -7,14 +7,16 @@ import ru.skillbox.diplom.group33.social.service.dto.dialog.response.DialogsRs;
 import ru.skillbox.diplom.group33.social.service.model.dialog.Dialog;
 import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = SecurityUtils.class)
+@Mapper(componentModel = "spring", imports = {SecurityUtils.class, ZonedDateTime.class})
 public interface DialogMapper {
 
 
     @Mapping(target = "unreadCount", ignore = true)
     @Mapping(target = "conversationPartner", ignore = true)
+    @Mapping(target = "lastMessage.time", expression = "java(message.getTime().toEpochSecond())")
     DialogDto convertToDto(Dialog dialog);
 
     @Mapping(target = "data", expression = "java(dtoList)")
