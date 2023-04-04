@@ -1,9 +1,6 @@
 package ru.skillbox.diplom.group33.social.service.model.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.skillbox.diplom.group33.social.service.model.auth.User;
 
 import javax.persistence.Column;
@@ -13,6 +10,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account extends User {

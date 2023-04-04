@@ -45,11 +45,11 @@ public class LikeService {
 
     public LikeDto changePostLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
+                .findByAuthorIdAndTypeAndItemId(getLoginUserId(), likeType, itemId)
                 .orElse(mapper.initLikeDto(new LikeDto(), likeType, itemId));
         Optional<Post> post = postRepository.findById(itemId);
         if (like.getId() == null || like.getIsDeleted()) {
-            like.setAuthorId(SecurityUtils.getJwtUserIdFromSecurityContext());
+            like.setAuthorId(getLoginUserId());
             like.setType(likeType);
             like.setItemId(itemId);
             like.setIsDeleted(false);
@@ -71,7 +71,7 @@ public class LikeService {
 
     public LikeDto changeCommentLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
+                .findByAuthorIdAndTypeAndItemId(getLoginUserId(), likeType, itemId)
                 .orElse(mapper.initLikeDto(new LikeDto(), likeType, itemId));
         Optional<Comment> comment = commentRepository.findById(itemId);
         if (like.getId() == null) {
@@ -94,7 +94,7 @@ public class LikeService {
 
     public Boolean getMyLike(Long itemId, LikeType likeType) {
         Like like = likeRepository
-                .findByAuthorIdAndTypeAndItemId(SecurityUtils.getJwtUserIdFromSecurityContext(), likeType, itemId)
+                .findByAuthorIdAndTypeAndItemId(getLoginUserId(), likeType, itemId)
                 .orElse(null);
         if (like == null) {
             return false;
@@ -104,7 +104,7 @@ public class LikeService {
 
 
     private boolean isAuthor(Long itemId) {
-        return itemId.equals(SecurityUtils.getJwtUserIdFromSecurityContext());
+        return itemId.equals(getLoginUserId());
     }
 
     private void changeMyLike(Post post, Comment comment, boolean like) {
@@ -115,6 +115,10 @@ public class LikeService {
             comment.setMyLike(like);
             commentRepository.save(comment);
         }
+    }
+
+    public Long getLoginUserId() {
+        return SecurityUtils.getJwtUserIdFromSecurityContext();
     }
 
 }

@@ -1,6 +1,7 @@
-package ru.skillbox.diplom.group33.social.service;
+package ru.skillbox.diplom.group33.social.service.service.post;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import ru.skillbox.diplom.group33.social.service.config.security.JwtUser;
+import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.post.like.LikeType;
@@ -18,7 +24,7 @@ import ru.skillbox.diplom.group33.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group33.social.service.model.post.Post;
 import ru.skillbox.diplom.group33.social.service.model.post.tag.Tag;
 import ru.skillbox.diplom.group33.social.service.repository.post.PostRepository;
-import ru.skillbox.diplom.group33.social.service.service.post.PostService;
+import ru.skillbox.diplom.group33.social.service.service.friend.FriendService;
 import ru.skillbox.diplom.group33.social.service.service.post.like.LikeService;
 import ru.skillbox.diplom.group33.social.service.service.post.tag.TagService;
 
@@ -47,6 +53,21 @@ public class PostServiceTest {
 
     @InjectMocks
     private PostService postService;
+    @Mock
+    private NotificationHandler notificationHandler;
+    @Mock
+    private SecurityContextHolder securityContextHolder;
+    @Mock
+    private FriendService friendService;
+
+    @BeforeEach
+    public void setup() {
+        JwtUser jwtUser = new JwtUser(1L, "Джон", "Сильвер", "test@test.ru"
+                , "test", null);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
     @Test
     public void testGetById() {

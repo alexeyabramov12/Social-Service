@@ -58,7 +58,7 @@ public class TagService {
         return tagSet;
     }
 
-    private Set<String> identifyDuplicates(Post post, Set<String> tags, Set<Tag> tagSet) {
+    public Set<String> identifyDuplicates(Post post, Set<String> tags, Set<Tag> tagSet) {
         List<Tag> listTags = repository.findByNameIn(tags);
         listTags.forEach(t -> {
             if (tags.contains(t.getName())) {
