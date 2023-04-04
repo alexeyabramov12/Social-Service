@@ -20,25 +20,25 @@ public class DialogControllerImpl implements DialogController {
 
     @Override
     public ResponseEntity<StatusMessageReadRs> updateReadStatus(Long companionId) {
-        log.info("In DialogController updateReadStatus: companionId - {}", companionId);
+        log.info("In DialogControllerImpl updateReadStatus: companionId - {}", companionId);
         return ResponseEntity.ok(service.updateReadStatus(companionId));
     }
 
     @Override
     public ResponseEntity<DialogsRs> getAllDialogs(Integer offset, Integer itemPerPage) {
-        log.info("In DialogController getDialogs:");
+        log.info("In DialogControllerImpl getAllDialogs:");
         return ResponseEntity.ok(service.getAllDialogs(offset, itemPerPage));
     }
 
     @Override
     public ResponseEntity<MessageRs> getAllMessages(Long companionId, Integer offset, Integer itemPerPage) {
-        log.info("In DialogController getMessages: companionId - {}", companionId);
+        log.info("In DialogControllerImpl getAllMessages: companionId - {}", companionId);
         return ResponseEntity.ok(service.getAllMessages(companionId, offset, itemPerPage));
     }
 
     @Override
     public ResponseEntity<UnreadCountRs> getUnreadCount() {
-        log.info("In DialogController getUnreadCount");
+        log.info("In DialogControllerImpl getUnreadCount");
         return ResponseEntity.ok(service.getUnreadCount());
     }
 }

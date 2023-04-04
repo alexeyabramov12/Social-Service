@@ -9,14 +9,18 @@ import ru.skillbox.diplom.group33.social.service.dto.dialog.messageShortDto.Mess
 import ru.skillbox.diplom.group33.social.service.model.dialog.message.Message;
 import ru.skillbox.diplom.group33.social.service.model.dialog.message.ReadStatus;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-@Mapper(componentModel = "spring", imports = ZonedDateTime.class)
+@Mapper(componentModel = "spring", imports = {ZonedDateTime.class, Instant.class, ZoneId.class})
 public interface MessageMapper {
 
+    @Mapping(target = "time", expression = "java(message.getTime().toEpochSecond())")
     MessageDto convertToDto(Message message);
 
     @Mapping(target = "readStatus", expression = "java(ReadStatus.SEND)")
+    @Mapping(target = "time", expression = "java(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dto.getTime()), ZoneId.systemDefault()))")
     Message convertToEntity(MessageDto dto);
 
     @Mapping(target = "time", expression = "java(message.getTime().toEpochSecond())")
@@ -24,9 +28,7 @@ public interface MessageMapper {
 
     ReadStatus convertRedStatusDtoToReadStatus(ReadStatusDto dto);
 
-    @Mapping(target = "time", ignore = true)
     MessageShortDto convertDtoToShortDto(MessageDto dto);
-
 
 
 }

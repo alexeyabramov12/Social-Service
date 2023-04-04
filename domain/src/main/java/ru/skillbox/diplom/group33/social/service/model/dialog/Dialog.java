@@ -1,15 +1,15 @@
 package ru.skillbox.diplom.group33.social.service.model.dialog;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 import ru.skillbox.diplom.group33.social.service.model.dialog.message.Message;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "dialog")

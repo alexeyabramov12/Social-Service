@@ -1,18 +1,16 @@
 package ru.skillbox.diplom.group33.social.service.model.dialog.message;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import ru.skillbox.diplom.group33.social.service.model.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
-@Data
-@ToString
+@Setter
+@Getter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "message")
