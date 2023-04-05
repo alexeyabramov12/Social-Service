@@ -63,8 +63,7 @@ public class PostService {
 
     public Page<PostDto> getAll(PostSearchDto postSearchDto, Pageable page) {
         log.info("IN PostService getAll - postSearchDto: {}", postSearchDto);
-
-        List<Long> blockedIds = friendService.getFriendIdsWhoBlocked(getJwtUserIdFromSecurityContext());
+        Long userId = getJwtUserIdFromSecurityContext();
 
         if (postSearchDto.getAuthor() != null) {
             AccountSearchDto accountSearchDto = new AccountSearchDto();
@@ -80,7 +79,7 @@ public class PostService {
             } else return Page.empty(page);
 
             List<AccountDto> accountList = accountService.search(accountSearchDto, page).toList();
-            List<Long> accountFriendIds = friendService.getFriendsIds(getJwtUserIdFromSecurityContext());
+            List<Long> accountFriendIds = friendService.getFriendsIds(userId);
 
             List<Long> accountIds = new ArrayList<>();
             accountList.forEach(a -> {
@@ -92,8 +91,12 @@ public class PostService {
             postSearchDto.setAccountIds(accountIds);
         }
 
-        postSearchDto.setAccountIds(postSearchDto.getAccountIds() == null ?
-                friendService.getFriendsIds(getJwtUserIdFromSecurityContext()) : postSearchDto.getAccountIds());
+        List<Long> blockedIds = friendService.getFriendIdsWhoBlocked(userId);
+
+        List<Long> accountIds = friendService.getFriendsIds(userId);
+        accountIds.add(userId);
+
+        postSearchDto.setAccountIds(postSearchDto.getAccountIds() == null ? accountIds : postSearchDto.getAccountIds());
         postSearchDto.setBlockedIds(blockedIds.size() == 0 ? null : blockedIds);
         postSearchDto.setDateFrom(postSearchDto.getDateFrom() == null ? ZonedDateTime.now().
                 minusYears(10).toEpochSecond() : postSearchDto.getDateFrom());
