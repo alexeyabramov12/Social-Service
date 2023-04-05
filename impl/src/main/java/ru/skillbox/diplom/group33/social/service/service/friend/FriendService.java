@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.FRIEND_REQUEST;
-import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
 import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
@@ -224,12 +223,12 @@ public class FriendService {
             listFriend.add(friend1);
 
             friendRepository.saveAll(listFriend);
-            notificationHandler.sendNotification(friend.getFromAccountId(), getJwtUsersId(),
+            notificationHandler.sendNotification(friend.getFromAccountId(), getJwtUserIdFromSecurityContext(),
                     FRIEND_REQUEST, "У вас новая заявка в друзья!");
 
             return friendMapper.convertToDtoList(listFriend);
         }
-        notificationHandler.sendNotification(id, getJwtUsersId(),
+        notificationHandler.sendNotification(id, getJwtUserIdFromSecurityContext(),
                 FRIEND_REQUEST, "У вас новая заявка в друзья!");
         return createInvoices(id);
     }
