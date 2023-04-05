@@ -7,4 +7,8 @@ import ru.skillbox.diplom.group33.social.service.repository.base.BaseRepository;
 @Repository
 public interface CountryRepository extends BaseRepository<Country> {
 
+    Boolean existsByTitle(String countryTitle);
+
+    Country getCountryByTitle(String countryTitle);
+
 }
