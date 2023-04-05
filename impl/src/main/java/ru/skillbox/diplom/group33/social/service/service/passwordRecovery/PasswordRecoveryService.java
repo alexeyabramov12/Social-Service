@@ -27,14 +27,13 @@ public class PasswordRecoveryService {
     private final PasswordEncoder encoder;
 
 
-
     public void setPassword(String linkId, NewPasswordDto newPasswordDto) {
         PasswordRecovery passwordRecovery = passwordRecoveryRepository
                 .findById(UUID.fromString(linkId)).orElseThrow(NullPointerException::new);
         User user = userRepository.findByEmail(passwordRecovery.getEmail())
                 .orElseThrow(NullPointerException::new);
-            user.setPassword(encoder.encode(newPasswordDto.getPassword()));
-            userRepository.save(user);
+        user.setPassword(encoder.encode(newPasswordDto.getPassword()));
+        userRepository.save(user);
         passwordRecoveryRepository.deleteAllByIdInBatch(List.of(UUID.fromString(linkId)));
     }
 

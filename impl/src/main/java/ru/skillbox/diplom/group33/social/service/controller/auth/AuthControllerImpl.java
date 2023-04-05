@@ -11,10 +11,13 @@ import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.changeEmail.ChangeEmailDto;
+import ru.skillbox.diplom.group33.social.service.dto.changeEmail.NewChangeEmailDto;
 import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.NewPasswordDto;
 import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.PasswordRecoveryDto;
 import ru.skillbox.diplom.group33.social.service.service.auth.AuthService;
 import ru.skillbox.diplom.group33.social.service.service.captcha.CaptchaService;
+import ru.skillbox.diplom.group33.social.service.service.changeEmail.ChangeEmailService;
 import ru.skillbox.diplom.group33.social.service.service.passwordRecovery.PasswordRecoveryService;
 
 
@@ -27,6 +30,8 @@ public class AuthControllerImpl implements AuthController {
 
     private final CaptchaService captchaService;
     private final PasswordRecoveryService passwordRecoveryService;
+    private final ChangeEmailService changeEmailService;
+
 
     @Override
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody AuthenticateDto authenticateDto) {
@@ -36,6 +41,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
+    @ResponseStatus(HttpStatus.OK)
     public void logout() {
     }
 
@@ -53,8 +59,8 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<RegistrationDto> changeEmail(RegistrationDto registrationDto) {
-        return null;
+    public void changeEmail(ChangeEmailDto changeEmailDto) {
+        changeEmailService.getChangeEmailMail(changeEmailDto);
     }
 
     @Override
@@ -64,8 +70,18 @@ public class AuthControllerImpl implements AuthController {
 
     @Override
     public void setPassword(String linkId, NewPasswordDto newPasswordDto) {
-
         passwordRecoveryService.setPassword(linkId, newPasswordDto);
+    }
+
+    @Override
+    public void emailSuccess(NewChangeEmailDto newChangeEmailDto) {
+        changeEmailService.emailSuccess(newChangeEmailDto);
+
+    }
+
+    @Override
+    public void setEmail() {
+        changeEmailService.setEmail();
     }
 
 

@@ -11,6 +11,8 @@ import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group33.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group33.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group33.social.service.dto.changeEmail.ChangeEmailDto;
+import ru.skillbox.diplom.group33.social.service.dto.changeEmail.NewChangeEmailDto;
 import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.NewPasswordDto;
 import ru.skillbox.diplom.group33.social.service.dto.passwordRecovery.PasswordRecoveryDto;
 import ru.skillbox.diplom.group33.social.service.utils.path.PathConstant;
@@ -28,7 +30,7 @@ public interface AuthController {
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
     ResponseEntity<AuthenticateResponseDto> login(AuthenticateDto authenticateDto);
 
-    @GetMapping("api/v1/logout")
+    @GetMapping("logout")
     @Operation(summary = "Выход из соц. сети")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешный выход", content = @Content(mediaType = "")),
@@ -66,7 +68,7 @@ public interface AuthController {
             @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
-    ResponseEntity<RegistrationDto> changeEmail(RegistrationDto registrationDto);
+    void changeEmail(@RequestBody ChangeEmailDto changeEmailDto);
 
     @PostMapping("change-password-link")
     @Operation(summary = "Смена пароля")
@@ -81,10 +83,30 @@ public interface AuthController {
     @PostMapping(value = "password/recovery/{linkId}")
     @Operation(summary = "Установка нового пароля")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешная загрузка", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "200", description = "Успешная смена пароля", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
     void setPassword(@PathVariable String linkId, @RequestBody NewPasswordDto newPasswordDto);
+
+    @PutMapping(value = "email")
+    @Operation(summary = "Отправка письма на новую электронную почту для подтверждения")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "На ваш новый e-mail отправлено письмо для подтверждения", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
+    void emailSuccess(@RequestBody NewChangeEmailDto newChangeEmailDto);
+
+    @PutMapping(value = "confirm-email")
+    @Operation(summary = "Установка новой электронной почты")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Новая электронная почта установлена", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "400", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "401", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "500", content = @Content(mediaType = ""))})
+    void setEmail();
 }
