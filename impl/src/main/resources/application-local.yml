@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: 13asapum
+    password: postgres
 
   liquibase:
     enabled: true
@@ -47,6 +47,7 @@ whitelist:
     - /**/swagger-ui/**
     - /**/storage
     - /**/change-password/**
+    - /**/geo/**
 
 cloudinary:
   cloud_name: dv7luy20w

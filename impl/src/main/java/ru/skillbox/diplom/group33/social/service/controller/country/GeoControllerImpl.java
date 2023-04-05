@@ -30,4 +30,7 @@ public class GeoControllerImpl implements CountryController {
         log.info("IN GeoControllerImpl getById - id: {}", id);
         return ResponseEntity.status(HttpStatus.OK).body(geoService.getById(id));
     }
+
+
+
 }
