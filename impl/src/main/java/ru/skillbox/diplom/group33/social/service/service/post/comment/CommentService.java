@@ -26,7 +26,7 @@ import java.time.ZonedDateTime;
 
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.COMMENT_COMMENT;
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.POST_COMMENT;
-import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.equal;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.getBaseSpecification;
 
@@ -58,7 +58,7 @@ public class CommentService {
             Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundResponseStatusException::new);
             post.setCommentsCount(post.getCommentsCount() + 1);
             postRepository.save(post);
-            notificationHandler.sendNotification(post.getAuthorId(), getJwtUsersId(),
+            notificationHandler.sendNotification(post.getAuthorId(), getJwtUserIdFromSecurityContext(),
                     POST_COMMENT, "К Вашей записи ".concat("\"" + post.getTitle() + "\""));
             log.info("IN CommentService create post comment - postId: {}, dto: {}", postId, dto);
         } else {
@@ -66,7 +66,7 @@ public class CommentService {
             Comment comment = commentRepository.findById(dto.getParentId()).orElseThrow(EntityNotFoundResponseStatusException::new);
             comment.setCommentsCount(comment.getCommentsCount() + 1);
             commentRepository.save(comment);
-            notificationHandler.sendNotification(comment.getAuthorId(), getJwtUsersId(),
+            notificationHandler.sendNotification(comment.getAuthorId(), getJwtUserIdFromSecurityContext(),
                     COMMENT_COMMENT, "\"" + comment.getCommentText() + "\"");
             log.info("IN CommentService create sub comment - postId: {}, dto: {}", postId, dto);
         }

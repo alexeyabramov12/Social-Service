@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static ru.skillbox.diplom.group33.social.service.dto.friend.StatusCode.FRIEND;
 import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.*;
-import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
+import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 
 @Slf4j
 @Service
@@ -54,7 +54,7 @@ public class NotificationHandler {
 
     public void sendNotificationReceivers(NotificationType type, String content) {
         log.info("NotificationHandler: sendNotificationReceivers {}", type);
-        getAccountsIds().forEach(id -> sendNotification(id, getJwtUsersId(), type, content));
+        getAccountsIds().forEach(id -> sendNotification(id, getJwtUserIdFromSecurityContext(), type, content));
     }
 
     @Async

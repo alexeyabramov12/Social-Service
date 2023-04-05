@@ -37,4 +37,5 @@ public class AccountDto extends UserDto {
     private Integer ageFrom;
     private StatusCode statusCode;
     private RoleEnum role;
+
 }

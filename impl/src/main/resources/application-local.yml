@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: 13asapum
 
   liquibase:
     enabled: true
@@ -29,6 +29,8 @@ topic:
   names:
     notify: notification
     message: message
+    account: accountOnline
+
 
 jwt:
   secret:

@@ -15,7 +15,4 @@ public interface BaseRepository<E extends BaseEntity> extends JpaRepository<E, L
     void deleteAll(Iterable<? extends E> entities);
 
     void delete(E entity);
-
-    @Override
-    Optional<E> findById(Long id);
 }

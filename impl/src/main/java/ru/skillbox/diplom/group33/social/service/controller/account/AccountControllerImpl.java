@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountDto;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountOnlineDto;
 import ru.skillbox.diplom.group33.social.service.dto.account.AccountSearchDto;
 import ru.skillbox.diplom.group33.social.service.service.account.AccountService;
 

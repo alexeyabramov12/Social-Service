@@ -14,6 +14,7 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
 import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import ru.skillbox.diplom.group33.social.service.dto.account.AccountOnlineDto;
 import ru.skillbox.diplom.group33.social.service.dto.dialog.message.MessageDto;
 import ru.skillbox.diplom.group33.social.service.dto.notification.NotificationDto;
 import ru.skillbox.diplom.group33.social.service.dto.notification.NotificationInputDto;
@@ -56,6 +57,7 @@ public class CustomKafkaConsumerFactory {
         mappings.put(NOTIFICATION_DTO_KEY, NotificationDto.class);
         mappings.put(MESSAGE_DTO_KEY, MessageDto.class);
         mappings.put(STREAMING_MESSAGE_DTO, StreamingMessageDto.class);
+        mappings.put(ACCOUNT_IS_ONLINE, AccountOnlineDto.class);
         typeMapper.setIdClassMapping(mappings);
         converter.setTypeMapper(typeMapper);
         return converter;

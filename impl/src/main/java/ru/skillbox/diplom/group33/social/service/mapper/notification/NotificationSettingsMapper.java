@@ -7,7 +7,7 @@ import ru.skillbox.diplom.group33.social.service.dto.notification.SettingsDto;
 import ru.skillbox.diplom.group33.social.service.dto.notification.request.SettingsRequest;
 import ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType;
 import ru.skillbox.diplom.group33.social.service.model.notification.NotificationSettings;
-import ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils;
+import ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 public interface NotificationSettingsMapper {
 
     @Mapping(target = "time", expression = "java(ZonedDateTime.now())")
-    @Mapping(target = "userId", expression = "java(SecurityUtils.getJwtUsersId())")
+    @Mapping(target = "userId", expression = "java(SecurityUtils.getJwtUserIdFromSecurityContext())")
     @Mapping(target = "data", expression =
             "java(List.of(new SettingsRequest(settings.getPost(),NotificationType.POST)," +
             " new SettingsRequest(settings.getPostComment(), NotificationType.POST_COMMENT)," +
