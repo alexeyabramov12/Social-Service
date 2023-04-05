@@ -7,12 +7,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group33.social.service.config.socket.handler.NotificationHandler;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.FriendSearchDto;
 import ru.skillbox.diplom.group33.social.service.dto.friend.StatusCode;
 import ru.skillbox.diplom.group33.social.service.exception.EntityNotFoundResponseStatusException;
 import ru.skillbox.diplom.group33.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group33.social.service.mapper.friend.FriendMapper;
+import ru.skillbox.diplom.group33.social.service.model.account.Account;
 import ru.skillbox.diplom.group33.social.service.model.friend.Friend;
 import ru.skillbox.diplom.group33.social.service.model.friend.Friend_;
 import ru.skillbox.diplom.group33.social.service.repository.account.AccountRepository;
@@ -23,6 +25,8 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.skillbox.diplom.group33.social.service.dto.notification.type.NotificationType.FRIEND_REQUEST;
+import static ru.skillbox.diplom.group33.social.service.utils.account.SecurityUtils.getJwtUsersId;
 import static ru.skillbox.diplom.group33.social.service.utils.security.SecurityUtils.getJwtUserIdFromSecurityContext;
 import static ru.skillbox.diplom.group33.social.service.utils.specification.SpecificationUtils.*;
 
@@ -34,6 +38,7 @@ public class FriendService {
     private final FriendMapper friendMapper;
     private final AccountMapper accountMapper;
     private final AccountRepository accountRepository;
+    private final NotificationHandler notificationHandler;
 
     public FriendDto getById(Long id) {
 
@@ -53,6 +58,22 @@ public class FriendService {
 
         if (searchDto.getStatusCode() == null) {
             searchDto.setStatusCode(StatusCode.NONE);
+        }
+
+        List<Friend> toUpdate = friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.FRIEND)));
+        if (!toUpdate.isEmpty()) {
+            for (Friend friend : toUpdate) {
+                Account updated = accountRepository.getReferenceById(friend.getToAccountId());
+                friend.setPhoto(updated.getPhoto());
+                friend.setFirstName(updated.getFirstName());
+                friend.setLastName(updated.getLastName());
+                friend.setCity(updated.getCity());
+                friend.setCountry(updated.getCountry());
+                friend.setBirthDay(updated.getBirthDate());
+                friendRepository.save(friend);
+            }
         }
 
         for (Friend friend : friendList) {
@@ -82,7 +103,6 @@ public class FriendService {
                 .findAll(getSpecification(new FriendSearchDto
                         (StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext())))
                 .size();
-
     }
 
     public void delete(Long id) {
@@ -96,10 +116,6 @@ public class FriendService {
                     friend.setStatusCode(StatusCode.NONE);
                 }
                 friend.setPreviousStatusCode(StatusCode.FRIEND);
-                friendRepository.save(friend);
-            } else if (friend.getStatusCode() == StatusCode.REQUEST_FROM) {
-                friend.setStatusCode(StatusCode.REJECTING);
-                friend.setPreviousStatusCode(StatusCode.REQUEST_FROM);
                 friendRepository.save(friend);
             } else {
                 friend.setPreviousStatusCode(friend.getStatusCode());
@@ -123,7 +139,7 @@ public class FriendService {
 
         List<Friend> invoices = getCurrentInvoicesByAccountId(id);
         List<Friend> blocked = getBlockedFriends(id);
-        Friend friend = new Friend();
+        Friend friend;
         if (invoices.isEmpty()) {
             friend = friendMapper.accountToFriend(accountRepository
                     .findById(id).orElse(null));
@@ -146,7 +162,7 @@ public class FriendService {
     private List<Friend> getBlockedFriends(Long id) {
         return friendRepository
                 .findAll(getSpecification(
-                        new FriendSearchDto(getJwtUserIdFromSecurityContext(), StatusCode.BLOCKED, id, false)));
+                        new FriendSearchDto(getJwtUserIdFromSecurityContext(), StatusCode.BLOCKED, id)));
     }
 
     public List<FriendDto> approveFriend(Long id) {
@@ -169,10 +185,30 @@ public class FriendService {
         friendRepository.saveAll(approved);
         return friendMapper.convertToDtoList(approved);
     }
+    private List<Friend> alreadySendRequests(Long id) {
+
+        List<Friend> listFriend = friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_TO, id)));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (id, StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext()))));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_FROM, id))));
+        listFriend.addAll(friendRepository
+                .findAll(getSpecification(new FriendSearchDto
+                        (id, StatusCode.REQUEST_FROM, getJwtUserIdFromSecurityContext()))));
+        return listFriend.stream().distinct().collect(Collectors.toList());
+    }
 
 
     public List<FriendDto> addFriend(Long id) {
         log.info("FriendService: add by id {}", id);
+
+        if(!alreadySendRequests(id).isEmpty()){
+            return friendMapper.convertToDtoList(alreadySendRequests(id));
+        }
 
         Friend friend = friendRepository.findById(id).orElse(null);
         if (friend != null && friend.getStatusCode() == StatusCode.RECOMMENDATION) {
@@ -188,11 +224,13 @@ public class FriendService {
             listFriend.add(friend1);
 
             friendRepository.saveAll(listFriend);
+            notificationHandler.sendNotification(friend.getFromAccountId(), getJwtUsersId(),
+                    FRIEND_REQUEST, "У вас новая заявка в друзья!");
 
             return friendMapper.convertToDtoList(listFriend);
         }
-
-
+        notificationHandler.sendNotification(id, getJwtUsersId(),
+                FRIEND_REQUEST, "У вас новая заявка в друзья!");
         return createInvoices(id);
     }
 
@@ -217,33 +255,6 @@ public class FriendService {
         return friendMapper.convertToDtoList(listFriend);
     }
 
-    private List<Friend> alreadySendRequests(Long id) {
-
-        List<Friend> listFriend = friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_TO, id, false)));
-        listFriend.addAll(friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (id, StatusCode.REQUEST_TO, getJwtUserIdFromSecurityContext(), false))));
-        listFriend.addAll(friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (getJwtUserIdFromSecurityContext(), StatusCode.REQUEST_FROM, id, false))));
-        listFriend.addAll(friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (id, StatusCode.REQUEST_FROM, getJwtUserIdFromSecurityContext(), false))));
-        return listFriend.stream().distinct().collect(Collectors.toList());
-    }
-
-    private List<Friend> alreadyFriends(Long id) {
-        List<Friend> listFriend = friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (getJwtUserIdFromSecurityContext(), StatusCode.FRIEND, id, false)));
-        listFriend.addAll(friendRepository
-                .findAll(getSpecification(new FriendSearchDto
-                        (id, StatusCode.FRIEND, getJwtUserIdFromSecurityContext(), false))));
-        return listFriend.stream().distinct().collect(Collectors.toList());
-    }
-
     private List<Friend> listFriendsToAdd(Long id) {
         return friendRepository.findAll(getSpecification(new FriendSearchDto(getJwtUserIdFromSecurityContext(), id)));
     }
@@ -265,8 +276,6 @@ public class FriendService {
             exceptIds.addAll(getFriendIdsWhoBlockedMe(id));
             exceptIds.addAll(getRequestTo(id));
             exceptIds.addAll(getRequestFrom(id));
-            exceptIds.addAll(alreadyFriends(id).stream().map(Friend::getToAccountId).collect(Collectors.toList()));
-            exceptIds.addAll(alreadyFriends(id).stream().map(Friend::getFromAccountId).collect(Collectors.toList()));
             exceptIds.add(id);
 
             List<Long> friendIds = getFriendsIds(id);
@@ -368,7 +377,7 @@ public class FriendService {
                 .and(equal(Friend_.statusCode, friendSearchDto.getStatusCode(), true))
                 .and(equal(Friend_.toAccountId, friendSearchDto.getToAccountId(), true))
                 .and(equal(Friend_.fromAccountId, friendSearchDto.getFromAccountId(), true))
-                .and(equal(Friend_.firstName, friendSearchDto.getFirstName(), true))
+                .and(likeLowerCase(Friend_.firstName, friendSearchDto.getFirstName(), true))
                 .and(equal(Friend_.city, friendSearchDto.getCity(), true))
                 .and(equal(Friend_.country, friendSearchDto.getCountry(), true))
                 .and(between(Friend_.birthDay,
