@@ -61,5 +61,12 @@ public class CaptchaService {
         log.info("In CaptchaService passCaptcha: {}", passCaptcha);
         return passCaptcha;
     }
+    public boolean passCaptcha(ChangeEmailDto changeEmailDto){
+        Captcha captchaOrigin = captchaRepository.getById(UUID.fromString(changeEmailDto.getTemp()));
+        boolean passCaptcha = captchaOrigin.getCode().equals(changeEmailDto.getCode());
+        log.info("In CaptchaService passCaptcha: {}", passCaptcha);
+        return passCaptcha;
+
+    }
 
 }
