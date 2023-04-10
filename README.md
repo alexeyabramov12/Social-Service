@@ -1,3 +1,5 @@
 # social-service
 
-Backend дипломного проекта
+Team thesis project.
+
+Video protection: https://youtu.be/O9mZNYOEGKc
