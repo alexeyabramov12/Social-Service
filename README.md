@@ -17,4 +17,4 @@ ____
 
 I was part of the development team for this project. The frontend was given to us and we wrote the server part for it.
 
-![image](https://github.com/alexeyabramov12/Images/blob/main/Командный%20диплом.png)
+![image](https://github.com/alexeyabramov12/Images/raw/main/certificate.png)
