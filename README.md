@@ -21,8 +21,6 @@ ____
 I was part of the development team for this project. We got the frontend and wrote a project for it. 
 [Presentation of our project.](https://www.youtube.com/watch?v=O9mZNYOEGKc)
 
-
-____
 ### This is my certificate:
 
 ![certificate](https://github.com/alexeyabramov12/Images/raw/main/certificate.png)
