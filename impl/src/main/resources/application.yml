@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/${POSTGRES_DB:postgres}
-    username: ${POSTGRES_USER:skillbox}
-    password: ${POSTGRES_PASSWORD:skillbox}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
 
   liquibase:
     enabled: true
