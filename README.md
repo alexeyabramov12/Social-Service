@@ -23,15 +23,15 @@ I was part of the development team for this project. We got the frontend and wro
 
 ### This is my certificate:
 
-![certificate](https://github.com/alexeyabramov12/Images/raw/main/certificate.png)
+![certificate](Images/Certificate.png)
 
 ____
 
 ### My work on the project.
 
-1. First task was to create a captcha and add it to the registration. A captcha picture with symbols is formed on the backende and comes to the front. Next comes the check for correct character input from the user. ![captcha](https://github.com/alexeyabramov12/Images/raw/main/Captcha.png)
-2. The second task was to create, delete and change posts, tags for posts and comments for posts. ![Posts](https://github.com/alexeyabramov12/Images/raw/main/Posts.png)
-3. Next, I worked on the dialogues.![Dialogs](https://github.com/alexeyabramov12/Images/raw/main/Dialogs.png)
+1. First task was to create a captcha and add it to the registration. A captcha picture with symbols is formed on the backende and comes to the front. Next comes the check for correct character input from the user. ![captcha](Images/Captcha.png)
+2. The second task was to create, delete and change posts, tags for posts and comments for posts. ![Posts](Images/Posts.png)
+3. Next, I worked on the dialogues.![Dialogs](Images/Dialogs.png)
 
 ____
 
