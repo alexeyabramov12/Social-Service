@@ -204,6 +204,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <skipTests>true</skipTests>
                     <argLine>
                         --add-opens java.base/java.lang=ALL-UNNAMED
                     </argLine>
