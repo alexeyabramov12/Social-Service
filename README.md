@@ -24,7 +24,7 @@ I was part of the development team for this project. We got the frontend and wro
 
 ### This is my certificate:
 
-![certificate](images/Certificate.png)
+![certificate](images/certificate.png)
 
 ____
 
